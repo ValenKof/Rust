@@ -24,8 +24,35 @@ pub fn gen_primes(max_num: u64) -> Vec<u64> {
     primes
 }
 
+pub struct Primes {
+    next: u64,
+}
+
+impl Primes {
+    pub fn iter() -> Primes {
+        Primes { next: 1 }
+    }
+}
+
+impl Iterator for Primes {
+    type Item = u64;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while !is_prime(self.next) {
+            self.next += 1;
+        }
+        let res = self.next;
+        self.next += 1;
+        Some(res)
+    }
+}
+
 #[test]
 fn test_gen_primes() {
     assert_eq!(gen_primes(30), vec![2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
+    assert_eq!(
+        Primes::iter().take(6).collect::<Vec<u64>>(),
+        vec![2, 3, 5, 7, 11, 13]
+    );
     assert_eq!(gen_primes(1_000_000).len(), 78498);
 }

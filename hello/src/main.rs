@@ -7,6 +7,12 @@ fn main() {
     }
     println!();
 
+    print!("First 10 primes: ");
+    for prime in primes::Primes::iter().take(10) {
+        print!("{} ", prime);
+    }
+    println!();
+
     println!("Point: {:?}", Tuple::point(1., 2., 3.));
     println!("Vector: {:?}", Tuple::vector(1., 2., 3.));
 }
