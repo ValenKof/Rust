@@ -29,10 +29,70 @@ impl Tuple {
 }
 
 impl std::ops::Add for Tuple {
+    type Output = Self;
+
+    fn add(self, t: Self) -> Self::Output {
+        Self {
+            x: self.x + t.x,
+            y: self.y + t.y,
+            z: self.z + t.z,
+            w: self.w + t.w,
+        }
+    }
+}
+
+impl std::ops::Sub for Tuple {
+    type Output = Self;
+
+    fn sub(self, t: Self) -> Self::Output {
+        Self {
+            x: self.x - t.x,
+            y: self.y - t.y,
+            z: self.z - t.z,
+            w: self.w - t.w,
+        }
+    }
+}
+
+impl std::ops::Neg for Tuple {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+            w: -self.w,
+        }
+    }
+}
+
+impl std::ops::Mul<f32> for Tuple {
+    type Output = Self;
+
+    fn mul(self, f: f32) -> Self::Output {
+        Self {
+            x: self.x * f,
+            y: self.y * f,
+            z: self.z * f,
+            w: self.w * f,
+        }
+    }
+}
+
+impl std::ops::Mul<Tuple> for f32 {
     type Output = Tuple;
 
-    fn add(self, t: Tuple) -> Tuple {
-        Tuple::new(self.x + t.x, self.y + t.y, self.z + t.z, self.w + t.w)
+    fn mul(self, t: Tuple) -> Self::Output {
+        t * self
+    }
+}
+
+impl std::ops::Div<f32> for Tuple {
+    type Output = Self;
+
+    fn div(self, f: f32) -> Self::Output {
+        self * (1.0 / f)
     }
 }
 
