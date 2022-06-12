@@ -1,4 +1,23 @@
-use super::Tuple;
+use super::{cross, dot, Tuple};
+
+trait ApproxEq {
+    fn is_near(&self, other: &Self, eps: f32) -> bool;
+}
+
+impl ApproxEq for f32 {
+    fn is_near(&self, other: &Self, eps: f32) -> bool {
+        (self - other).abs() < eps
+    }
+}
+
+impl ApproxEq for Tuple {
+    fn is_near(&self, other: &Self, eps: f32) -> bool {
+        self.x.is_near(&other.x, eps)
+            && self.y.is_near(&other.y, eps)
+            && self.z.is_near(&other.z, eps)
+            && self.w.is_near(&other.w, eps)
+    }
+}
 
 #[test]
 fn test_create_tuple_with_w_equal_to_1() {
@@ -92,4 +111,43 @@ fn test_multiplying_tuple_by_fraction() {
 fn test_dividing_tuple_by_scalar() {
     let t = Tuple::new(1., -2., 3., -4.);
     assert_eq!(t / 2., Tuple::new(0.5, -1., 1.5, -2.));
+}
+
+#[test]
+fn test_length_of_vector() {
+    assert_eq!(Tuple::vector(1., 0., 0.).len(), 1.);
+    assert_eq!(Tuple::vector(0., 1., 0.).len(), 1.);
+    assert_eq!(Tuple::vector(0., 0., 1.).len(), 1.);
+    assert_eq!(Tuple::vector(1., 2., 3.).len(), 14_f32.sqrt());
+    assert_eq!(Tuple::vector(-1., -2., -3.).len(), 14_f32.sqrt());
+}
+
+#[test]
+fn test_normalize_vector() {
+    assert_eq!(
+        Tuple::vector(4., 0., 0.).normalize(),
+        Tuple::vector(1., 0., 0.)
+    );
+    assert!(Tuple::vector(1., 2., 3.)
+        .normalize()
+        .is_near(&Tuple::vector(0.26726, 0.53452, 0.80178), 1e-5));
+    assert!(Tuple::vector(1., 2., 3.)
+        .normalize()
+        .len()
+        .is_near(&1., 1e-5));
+}
+
+#[test]
+fn test_dot_product_of_two_vectors() {
+    let a = Tuple::vector(1., 2., 3.);
+    let b = Tuple::vector(2., 3., 4.);
+    assert_eq!(dot(&a, &b), 20.);
+}
+
+#[test]
+fn test_cross_product_of_two_vector() {
+    let a = Tuple::vector(1., 2., 3.);
+    let b = Tuple::vector(2., 3., 4.);
+    assert_eq!(cross(&a, &b), Tuple::vector(-1., 2., -1.));
+    assert_eq!(cross(&b, &a), Tuple::vector(1., -2., 1.));
 }
