@@ -1,23 +1,6 @@
 use super::{cross, dot, Tuple};
-
-trait ApproxEq {
-    fn is_near(&self, other: &Self, eps: f32) -> bool;
-}
-
-impl ApproxEq for f32 {
-    fn is_near(&self, other: &Self, eps: f32) -> bool {
-        (self - other).abs() < eps
-    }
-}
-
-impl ApproxEq for Tuple {
-    fn is_near(&self, other: &Self, eps: f32) -> bool {
-        self.x.is_near(&other.x, eps)
-            && self.y.is_near(&other.y, eps)
-            && self.z.is_near(&other.z, eps)
-            && self.w.is_near(&other.w, eps)
-    }
-}
+use crate::approx::Approx;
+use crate::assert_near;
 
 #[test]
 fn test_create_tuple_with_w_equal_to_1() {
@@ -128,13 +111,11 @@ fn test_normalize_vector() {
         Tuple::vector(4., 0., 0.).normalize(),
         Tuple::vector(1., 0., 0.)
     );
-    assert!(Tuple::vector(1., 2., 3.)
-        .normalize()
-        .is_near(&Tuple::vector(0.26726, 0.53452, 0.80178), 1e-5));
-    assert!(Tuple::vector(1., 2., 3.)
-        .normalize()
-        .len()
-        .is_near(&1., 1e-5));
+    assert_near!(
+        Tuple::vector(1., 2., 3.).normalize(),
+        Tuple::vector(0.26726, 0.53452, 0.80178)
+    );
+    assert_near!(Tuple::vector(1., 2., 3.).normalize().len(), 1.0);
 }
 
 #[test]

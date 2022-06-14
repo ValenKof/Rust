@@ -116,6 +116,15 @@ pub fn cross(a: &Tuple, b: &Tuple) -> Tuple {
     )
 }
 
+impl crate::approx::Approx for Tuple {
+    fn is_near(&self, other: &Self, eps: f32) -> bool {
+        self.x.is_near(&other.x, eps)
+            && self.y.is_near(&other.y, eps)
+            && self.z.is_near(&other.z, eps)
+            && self.w.is_near(&other.w, eps)
+    }
+}
+
 #[cfg(test)]
 #[path = "./tuple_test.rs"]
 mod tests;
