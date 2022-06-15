@@ -16,5 +16,6 @@ fn main() {
     }
 
     let img = Image::from_canvas(canvas);
-    img.write_png("img.png");
+    img.write_png("img.out.png");
+    img.write_ppm("img.out.ppm");
 }

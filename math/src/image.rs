@@ -4,6 +4,7 @@ use image::codecs::png::PngEncoder;
 use image::ColorType;
 use image::ImageEncoder;
 use std::fs::File;
+use std::io::Write;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct RGB {
@@ -104,6 +105,14 @@ impl Image {
             ppm.push(row);
         }
         ppm
+    }
+
+    pub fn write_ppm(&self, filename: &str) {
+        let mut out = File::create(filename).unwrap();
+        for line in self.to_ppm() {
+            out.write_all(line.as_bytes()).unwrap();
+            out.write_all(b"\n").unwrap();
+        }
     }
 }
 
