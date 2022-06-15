@@ -9,6 +9,14 @@ impl Color {
     pub fn new(red: f32, green: f32, blue: f32) -> Color {
         Color { red, green, blue }
     }
+
+    pub fn white() -> Color {
+        Color::new(1.0, 1.0, 1.0)
+    }
+
+    pub fn black() -> Color {
+        Color::new(0.0, 0.0, 0.0)
+    }
 }
 
 impl std::ops::Add for Color {

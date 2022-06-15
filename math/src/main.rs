@@ -1,17 +1,20 @@
+use math::canvas::Canvas;
+use math::color::Color;
 use math::image::Image;
 
 fn main() {
     println!("Hello");
-    let mut img = Image::new(128, 128);
-    let mut next = 0;
-    for row in 0..img.rows {
-        for _col in 0..img.cols {
-            img.data[next + 0] = 0;
-            img.data[next + 1] = row as u8;
-            img.data[next + 2] = 0;
-            next += 3;
+    let mut canvas = Canvas::new(128, 128, Color::black());
+    for y in 0..canvas.height {
+        for x in 0..canvas.width {
+            canvas.set(
+                x,
+                y,
+                Color::new(0.0, (y as f32) / 128.0, (x as f32) / 128.0),
+            );
         }
     }
 
-    img.write("img.png");
+    let img = Image::from_canvas(canvas);
+    img.write_png("img.png");
 }
