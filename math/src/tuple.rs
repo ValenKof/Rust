@@ -27,12 +27,12 @@ impl Tuple {
         self.w == 0.0
     }
 
-    pub fn len(&self) -> f32 {
+    pub fn len(self) -> f32 {
         dot(self, self).sqrt()
     }
 
-    pub fn normalize(&self) -> Tuple {
-        *self / self.len()
+    pub fn normalize(self) -> Tuple {
+        self / self.len()
     }
 }
 
@@ -104,11 +104,11 @@ impl std::ops::Div<f32> for Tuple {
     }
 }
 
-pub fn dot(a: &Tuple, b: &Tuple) -> f32 {
+pub fn dot(a: Tuple, b: Tuple) -> f32 {
     a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w
 }
 
-pub fn cross(a: &Tuple, b: &Tuple) -> Tuple {
+pub fn cross(a: Tuple, b: Tuple) -> Tuple {
     Tuple::vector(
         a.y * b.z - a.z * b.y,
         a.z * b.x - a.x * b.z,

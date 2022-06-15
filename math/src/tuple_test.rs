@@ -122,13 +122,13 @@ fn test_normalize_vector() {
 fn test_dot_product_of_two_vectors() {
     let a = Tuple::vector(1., 2., 3.);
     let b = Tuple::vector(2., 3., 4.);
-    assert_eq!(dot(&a, &b), 20.);
+    assert_eq!(dot(a, b), 20.);
 }
 
 #[test]
 fn test_cross_product_of_two_vector() {
     let a = Tuple::vector(1., 2., 3.);
     let b = Tuple::vector(2., 3., 4.);
-    assert_eq!(cross(&a, &b), Tuple::vector(-1., 2., -1.));
-    assert_eq!(cross(&b, &a), Tuple::vector(1., -2., 1.));
+    assert_eq!(cross(a, b), Tuple::vector(-1., 2., -1.));
+    assert_eq!(cross(b, a), Tuple::vector(1., -2., 1.));
 }

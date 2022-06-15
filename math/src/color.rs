@@ -55,6 +55,14 @@ impl std::ops::Mul<Color> for f32 {
     }
 }
 
+pub fn hadamard_product(a: Color, b: Color) -> Color {
+    Color {
+        red: a.red * b.red,
+        green: a.green * b.green,
+        blue: a.blue * b.blue,
+    }
+}
+
 impl crate::approx::Approx for Color {
     fn is_near(&self, other: &Self, eps: f32) -> bool {
         self.red.is_near(&other.red, eps)

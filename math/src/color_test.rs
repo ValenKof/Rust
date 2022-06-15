@@ -1,4 +1,4 @@
-use super::Color;
+use super::{hadamard_product, Color};
 use crate::approx::Approx;
 use crate::assert_near;
 
@@ -30,4 +30,11 @@ fn test_multiplying_color_by_scalar() {
     let c2 = Color::new(0.4, 0.6, 0.8);
     assert_eq!(c1 * 2.0, c2);
     assert_eq!(2.0 * c1, c2);
+}
+
+#[test]
+fn test_multiplying_colors() {
+    let c1 = Color::new(1.0, 0.2, 0.4);
+    let c2 = Color::new(0.9, 1.0, 0.1);
+    assert_near!(hadamard_product(c1, c2), Color::new(0.9, 0.2, 0.04));
 }
