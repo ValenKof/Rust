@@ -55,7 +55,7 @@ fn main() {
         };
         while p.position.y > 0.0 && p.position.x < 900.0 {
             let x = (p.position.x.round() as usize).clamp(0, c.width - 1);
-            let y = (500 - (p.position.y.round() as usize)).clamp(0, c.height - 1);
+            let y = (500 - (p.position.y.round() as i32)).clamp(0, (c.height - 1) as i32) as usize;
             c.set(x, y, color);
             p = tick(&e, &p);
         }

@@ -1,11 +1,21 @@
 # Rust Samples
 
-Code samples in Rust
+Code samples in Rust.
 
-## Setup
+## Content
+
+* `math` - graphics library (and example binaries)
+* `primes` - primes library (and example binaries)
+* `hello` - binaries using `math` and `primes` libraries
+
+## Usage
 
 ```
-git clone https://github.com/ValenKof/Rust.git
-cd Rust
-cargo run
+cd ~ && git clone https://github.com/ValenKof/Rust.git
+cd ~/Rust/math && cargo build && cargo run
+cd ~/Rust/primes && cargo build && cargo run
+cd ~/Rust/hello
+cargo run --bin print_primes
+cargo run --bin is_prime 1 two 3 4.0 5 6
+cargo run --bin stack
 ```
