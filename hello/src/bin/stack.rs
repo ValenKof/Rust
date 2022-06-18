@@ -133,4 +133,7 @@ fn main() {
     for x in st.iter() {
         println!("{}", x);
     }
+    for x in st.iter() {
+        println!("{}", x);
+    }
 }
