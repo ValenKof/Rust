@@ -1,4 +1,5 @@
 use super::Matrix;
+use crate::tuple::Tuple;
 
 #[test]
 fn test_constructing_4x4_matrix() {
@@ -54,4 +55,34 @@ fn test_multiply_matrices() {
     let b: Matrix<3, 2> = Matrix::new([[7., 8.], [9., 10.], [11., 12.]]);
     let c: Matrix<2, 2> = Matrix::new([[58., 64.], [139., 154.]]);
     assert_eq!(&a * &b, c);
+}
+
+#[test]
+fn test_multiply_matrix_by_tuple() {
+    let a: Matrix<4, 4> = Matrix::new([
+        [1., 2., 3., 4.],
+        [2., 4., 4., 2.],
+        [8., 6., 4., 1.],
+        [0., 0., 0., 1.],
+    ]);
+    let b = Tuple::new(1., 2., 3., 1.);
+    assert_eq!(
+        (&a * &b.to_matrix()).to_tuple(),
+        Tuple::new(18., 24., 33., 1.)
+    );
+}
+
+#[test]
+fn test_multiply_tuple_by_matrix() {
+    let a = Tuple::new(1., 2., 3., 1.);
+    let b: Matrix<4, 4> = Matrix::new([
+        [1., 2., 3., 4.],
+        [2., 4., 4., 2.],
+        [8., 6., 4., 1.],
+        [0., 0., 0., 1.],
+    ]);
+    assert_eq!(
+        (&a.to_matrix().transpose() * &b).transpose().to_tuple(),
+        Tuple::new(29., 28., 23., 12.)
+    );
 }

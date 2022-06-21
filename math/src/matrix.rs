@@ -1,11 +1,32 @@
 #[derive(Debug, PartialEq)]
-struct Matrix<const N: usize, const M: usize> {
+pub struct Matrix<const N: usize, const M: usize> {
     data: [[f32; M]; N],
 }
 
 impl<const N: usize, const M: usize> Matrix<N, M> {
     pub fn new(data: [[f32; M]; N]) -> Self {
         Self { data }
+    }
+
+    pub fn transpose(&self) -> Matrix<M, N> {
+        let mut res = [[0.0; N]; M];
+        for col in 0..M {
+            for row in 0..N {
+                res[col][row] = self.data[row][col];
+            }
+        }
+        Matrix::new(res)
+    }
+}
+
+impl Matrix<4, 1> {
+    pub fn to_tuple(&self) -> crate::tuple::Tuple {
+        crate::tuple::Tuple::new(
+            self.data[0][0],
+            self.data[1][0],
+            self.data[2][0],
+            self.data[3][0],
+        )
     }
 }
 
@@ -49,7 +70,7 @@ impl<const N: usize, const M: usize, const K: usize> std::ops::Mul<&Matrix<M, K>
             for col in 0..K {
                 let mut sum = 0.0;
                 for i in 0..M {
-                    sum += self[(row, i)] * rhs[(i, col)];
+                    sum += self.data[row][i] * rhs.data[i][col];
                 }
                 res[row][col] = sum;
             }
