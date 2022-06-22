@@ -1,4 +1,6 @@
 use super::Matrix;
+use crate::approx::Approx;
+use crate::assert_near;
 use crate::tuple::Tuple;
 
 #[test]
@@ -85,4 +87,93 @@ fn test_multiply_tuple_by_matrix() {
         (&a.to_matrix().transpose() * &b).transpose().to_tuple(),
         Tuple::new(29., 28., 23., 12.)
     );
+}
+
+#[test]
+fn test_create_zero_matrix() {
+    let a: Matrix<3, 2> = Matrix::zeroes();
+    let b = Matrix::new([[0., 0.], [0., 0.], [0., 0.]]);
+    assert_eq!(a, b);
+}
+
+#[test]
+fn test_create_identity_matrix() {
+    let a: Matrix<3, 3> = Matrix::identity();
+    let b = Matrix::new([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]]);
+    assert_eq!(a, b);
+}
+
+#[test]
+fn test_multiply_matrix_by_identity() {
+    let a: Matrix<4, 4> = Matrix::new([
+        [0., 1., 2., 4.],
+        [1., 2., 4., 8.],
+        [2., 4., 8., 16.],
+        [4., 8., 16., 32.],
+    ]);
+    assert_eq!(&a * &Matrix::identity(), a);
+}
+
+#[test]
+fn test_transpose_matrix() {
+    let a: Matrix<4, 4> = Matrix::new([
+        [0., 9., 3., 0.],
+        [9., 8., 0., 8.],
+        [1., 8., 5., 3.],
+        [0., 0., 5., 8.],
+    ]);
+    let b: Matrix<4, 4> = Matrix::new([
+        [0., 9., 1., 0.],
+        [9., 8., 8., 0.],
+        [3., 0., 5., 5.],
+        [0., 8., 3., 8.],
+    ]);
+    assert_eq!(a.transpose(), b);
+}
+
+#[test]
+fn test_determinant_of_2x2_matrix() {
+    let a = Matrix::new([[1., 5.], [-3., 2.]]);
+    assert_eq!(a.determinant(), 17.);
+}
+
+#[test]
+fn test_determinant_of_3x3_matrix() {
+    let a = Matrix::new([[1., 2., 6.], [-5., 8., -4.], [2., 6., 4.]]);
+    assert_eq!(a.determinant(), -196.);
+}
+
+#[test]
+fn test_determinant_of_4x4_matrix() {
+    let a = Matrix::new([
+        [-2., -8., 3., 5.],
+        [-3., 1., 7., 3.],
+        [1., 2., -9., 6.],
+        [-6., 7., 7., -9.],
+    ]);
+    assert_eq!(a.determinant(), -4071.);
+}
+
+#[test]
+fn test_determinant_of_invertible_matrix() {
+    let a = Matrix::new([
+        [6., 4., 4., 4.],
+        [5., 5., 7., 6.],
+        [4., -9., 3., -7.],
+        [9., 1., 7., -6.],
+    ]);
+    assert_near!(a.determinant(), -2120., 1e-3);
+    assert!(a.inverse().is_some());
+}
+
+#[test]
+fn test_determinant_of_non_invertible_matrix() {
+    let a = Matrix::new([
+        [-4., 2., -2., -3.],
+        [9., 6., 2., 6.],
+        [0., -5., 1., -5.],
+        [0., 0., 0., 0.],
+    ]);
+    assert_eq!(a.determinant(), 0.0);
+    assert!(a.inverse().is_none());
 }

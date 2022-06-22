@@ -8,14 +8,110 @@ impl<const N: usize, const M: usize> Matrix<N, M> {
         Self { data }
     }
 
+    pub fn zeroes() -> Self {
+        Self {
+            data: [[0.0; M]; N],
+        }
+    }
+
     pub fn transpose(&self) -> Matrix<M, N> {
-        let mut res = [[0.0; N]; M];
+        let mut data = [[0.0; N]; M];
         for col in 0..M {
             for row in 0..N {
-                res[col][row] = self.data[row][col];
+                data[col][row] = self.data[row][col];
             }
         }
-        Matrix::new(res)
+        Matrix { data }
+    }
+}
+
+fn run_gauss<const N: usize, const K: usize>(a: &mut [[[f32; K]; N]; N]) -> Option<f32> {
+    let mut det = 1.0;
+    for i in 0..N {
+        let mut best_row = i;
+        for row in i + 1..N {
+            if a[row][i][0].abs() > a[best_row][i][0].abs() {
+                best_row = row;
+            }
+        }
+        if best_row != i {
+            det = -det;
+            for j in 0..N {
+                let tmp = a[i][j];
+                a[i][j] = a[best_row][j];
+                a[best_row][j] = tmp;
+            }
+        }
+
+        if a[i][i][0].abs() < 1e-3 {
+            return None;
+        }
+
+        let mult = 1.0 / a[i][i][0];
+        det *= a[i][i][0];
+        for j in 0..N {
+            for x in 0..K {
+                a[i][j][x] *= mult;
+            }
+        }
+
+        for j in 0..N {
+            if i == j {
+                continue;
+            }
+            let mult = a[j][i][0];
+            for k in 0..N {
+                for x in 0..K {
+                    a[j][k][x] -= a[i][k][x] * mult;
+                }
+            }
+        }
+    }
+    if det.abs() < 1e-3 {
+        return None;
+    }
+    Some(det)
+}
+
+impl<const N: usize> Matrix<N, N> {
+    pub fn identity() -> Self {
+        let mut data = [[0.0; N]; N];
+        for i in 0..N {
+            data[i][i] = 1.0;
+        }
+        Self { data }
+    }
+
+    pub fn determinant(&self) -> f32 {
+        let mut gauss = [[[0.0; 1]; N]; N];
+        for i in 0..N {
+            for j in 0..N {
+                gauss[i][j][0] = self.data[i][j];
+            }
+        }
+        run_gauss(&mut gauss).unwrap_or(0.0)
+    }
+
+    pub fn inverse(&self) -> Option<Self> {
+        let mut gauss = [[[0.0; 2]; N]; N];
+        for i in 0..N {
+            for j in 0..N {
+                gauss[i][j][0] = self.data[i][j];
+            }
+            gauss[i][i][1] = 1.0;
+        }
+
+        if let Some(_) = run_gauss(&mut gauss) {
+            let mut data = [[0.0; N]; N];
+            for i in 0..N {
+                for j in 0..N {
+                    data[i][j] = gauss[i][j][1];
+                }
+            }
+            Some(Self { data })
+        } else {
+            None
+        }
     }
 }
 
