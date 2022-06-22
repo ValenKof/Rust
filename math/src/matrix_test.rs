@@ -1,7 +1,5 @@
 use super::Matrix;
 use crate::approx::Approx;
-use crate::assert_near;
-use crate::tuple::Tuple;
 
 #[test]
 fn test_constructing_4x4_matrix() {
@@ -162,7 +160,7 @@ fn test_determinant_of_invertible_matrix() {
         [4., -9., 3., -7.],
         [9., 1., 7., -6.],
     ]);
-    assert_near!(a.determinant(), -2120., 1e-3);
+    assert_eq!(a.determinant(), -2120.);
     assert!(a.inverse().is_some());
 }
 

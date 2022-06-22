@@ -25,7 +25,7 @@ impl<const N: usize, const M: usize> Matrix<N, M> {
     }
 }
 
-fn run_gauss<const N: usize, const K: usize>(a: &mut [[[f32; K]; N]; N]) -> Option<f32> {
+fn run_gauss<const N: usize, const K: usize>(a: &mut [[[f64; K]; N]; N]) -> Option<f64> {
     let mut det = 1.0;
     for i in 0..N {
         let mut best_row = i;
@@ -86,17 +86,17 @@ impl<const N: usize> Matrix<N, N> {
         let mut gauss = [[[0.0; 1]; N]; N];
         for i in 0..N {
             for j in 0..N {
-                gauss[i][j][0] = self.data[i][j];
+                gauss[i][j][0] = self.data[i][j] as f64;
             }
         }
-        run_gauss(&mut gauss).unwrap_or(0.0)
+        run_gauss(&mut gauss).unwrap_or(0.0) as f32
     }
 
     pub fn inverse(&self) -> Option<Self> {
         let mut gauss = [[[0.0; 2]; N]; N];
         for i in 0..N {
             for j in 0..N {
-                gauss[i][j][0] = self.data[i][j];
+                gauss[i][j][0] = self.data[i][j] as f64;
             }
             gauss[i][i][1] = 1.0;
         }
@@ -105,7 +105,7 @@ impl<const N: usize> Matrix<N, N> {
             let mut data = [[0.0; N]; N];
             for i in 0..N {
                 for j in 0..N {
-                    data[i][j] = gauss[i][j][1];
+                    data[i][j] = gauss[i][j][1] as f32;
                 }
             }
             Some(Self { data })
