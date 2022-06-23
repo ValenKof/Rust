@@ -8,6 +8,16 @@ impl Approx for f32 {
     }
 }
 
+impl<T: Approx> Approx for Option<T> {
+    fn is_near(&self, other: &Self, eps: f32) -> bool {
+        match (self.as_ref(), other.as_ref()) {
+            (Some(a), Some(b)) => a.is_near(b, eps),
+            (None, None) => true,
+            (_, _) => false,
+        }
+    }
+}
+
 #[macro_export]
 macro_rules! assert_near {
     ($lhs:expr, $rhs:expr) => {
