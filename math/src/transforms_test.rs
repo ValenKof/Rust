@@ -89,3 +89,44 @@ fn test_rotate_point_around_z_axis() {
     );
     assert_near!(&full_quarter * p, point(-1, 0, 0));
 }
+
+#[test]
+fn test_shearing() {
+    let t0 = shearing(1., 0., 0., 0., 0., 0.);
+    let t1 = shearing(0., 1., 0., 0., 0., 0.);
+    let t2 = shearing(0., 0., 1., 0., 0., 0.);
+    let t3 = shearing(0., 0., 0., 1., 0., 0.);
+    let t4 = shearing(0., 0., 0., 0., 1., 0.);
+    let t5 = shearing(0., 0., 0., 0., 0., 1.);
+    let p = point(2, 3, 4);
+    assert_eq!(&t0 * p, point(5, 3, 4));
+    assert_eq!(&t1 * p, point(6, 3, 4));
+    assert_eq!(&t2 * p, point(2, 5, 4));
+    assert_eq!(&t3 * p, point(2, 7, 4));
+    assert_eq!(&t4 * p, point(2, 3, 6));
+    assert_eq!(&t5 * p, point(2, 3, 7));
+}
+
+#[test]
+fn test_individual_transformations() {
+    let p1 = point(1, 0, 1);
+    let a = rotation_x(PI / 2.);
+    let b = scaling(5., 5., 5.);
+    let c = translation(10., 5., 7.);
+    let p2 = &a * p1;
+    assert_near!(p2, point(1, -1, 0));
+    let p3 = &b * p2;
+    assert_near!(p3, point(5, -5, 0));
+    let p4 = &c * p3;
+    assert_near!(p4, point(15, 0, 7));
+}
+
+#[test]
+fn test_chained_transformations() {
+    let p = point(1, 0, 1);
+    let a = rotation_x(PI / 2.);
+    let b = scaling(5., 5., 5.);
+    let c = translation(10., 5., 7.);
+    let t = &(&c * &b) * &a;
+    assert_near!(&t * p, point(15, 0, 7));
+}

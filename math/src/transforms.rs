@@ -43,6 +43,15 @@ pub fn rotation_z(rad: f32) -> Matrix<4, 4> {
     ])
 }
 
+pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Matrix<4, 4> {
+    Matrix::new([
+        [1., xy, xz, 0.],
+        [yx, 1., yz, 0.],
+        [zx, zy, 1., 0.],
+        [0., 0., 0., 1.],
+    ])
+}
+
 #[cfg(test)]
 #[path = "./transforms_test.rs"]
 mod tests;
