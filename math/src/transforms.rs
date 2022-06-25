@@ -56,22 +56,25 @@ pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Matrix<
 pub trait Transform: Sized {
     fn apply(&self, t: &Matrix<4, 4>) -> Self;
 
-    fn translation(&self, x: f32, y: f32, z: f32) -> Self {
+    fn translate(&self, x: f32, y: f32, z: f32) -> Self {
         self.apply(&translation(x, y, z))
     }
-    fn scaling(&self, x: f32, y: f32, z: f32) -> Self {
+    fn scale(&self, x: f32, y: f32, z: f32) -> Self {
         self.apply(&scaling(x, y, z))
     }
-    fn rotation_x(&self, rad: f32) -> Self {
+    fn uniform_scale(&self, f: f32) -> Self {
+        self.apply(&scaling(f, f, f))
+    }
+    fn rotate_x(&self, rad: f32) -> Self {
         self.apply(&rotation_x(rad))
     }
-    fn rotation_y(&self, rad: f32) -> Self {
+    fn rotate_y(&self, rad: f32) -> Self {
         self.apply(&rotation_y(rad))
     }
-    fn rotation_z(&self, rad: f32) -> Self {
+    fn rotate_z(&self, rad: f32) -> Self {
         self.apply(&rotation_z(rad))
     }
-    fn shearing(&self, xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Self {
+    fn shear(&self, xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Self {
         self.apply(&shearing(xy, xz, yx, yz, zx, zy))
     }
 }
