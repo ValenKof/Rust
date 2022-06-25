@@ -130,3 +130,24 @@ fn test_chained_transformations() {
     let t = &(&c * &b) * &a;
     assert_near!(&t * p, point(15, 0, 7));
 }
+
+#[test]
+fn test_transform_trait() {
+    let p = point(1, 0, 1);
+    let t1 = Matrix::identity()
+        .rotation_x(PI / 2.)
+        .scaling(5., 5., 5.)
+        .translation(10., 5., 7.);
+    let t2 = rotation_x(PI / 2.)
+        .scaling(5., 5., 5.)
+        .translation(10., 5., 7.);
+    assert_near!(t1, t2);
+    assert_near!(&t1 * p, point(15, 0, 7));
+    assert_near!(
+        p.rotation_x(PI / 2.)
+            .scaling(5., 5., 5.)
+            .translation(10., 5., 7.),
+        point(15, 0, 7)
+    );
+    assert_near!(p.apply(&t1), point(15, 0, 7));
+}
