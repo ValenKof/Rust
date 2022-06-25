@@ -17,13 +17,3 @@ impl<T: Approx> Approx for Option<T> {
         }
     }
 }
-
-#[macro_export]
-macro_rules! assert_near {
-    ($lhs:expr, $rhs:expr) => {
-        assert_near!($lhs, $rhs, 1e-5)
-    };
-    ($lhs:expr, $rhs:expr, $eps:expr) => {
-        assert!((&$lhs).is_near(&$rhs, $eps))
-    };
-}

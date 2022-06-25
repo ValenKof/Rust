@@ -8,6 +8,16 @@ impl<const N: usize, const M: usize> Matrix<N, M> {
         Self { data }
     }
 
+    pub fn from_vec(vec: Vec<Vec<f32>>) -> Self {
+        let mut data = [[0.0; M]; N];
+        for row in 0..N {
+            for col in 0..M {
+                data[row][col] = vec[row][col];
+            }
+        }
+        Matrix { data }
+    }
+
     pub fn zeroes() -> Self {
         Self {
             data: [[0.0; M]; N],
