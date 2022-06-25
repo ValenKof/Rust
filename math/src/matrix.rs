@@ -74,12 +74,16 @@ fn run_gauss<const N: usize, const K: usize>(a: &mut [[[f64; K]; N]; N]) -> Opti
 }
 
 impl<const N: usize> Matrix<N, N> {
-    pub fn identity() -> Self {
+    pub fn diagonal(diag: [f32; N]) -> Self {
         let mut data = [[0.0; N]; N];
         for i in 0..N {
-            data[i][i] = 1.0;
+            data[i][i] = diag[i];
         }
         Self { data }
+    }
+
+    pub fn identity() -> Self {
+        Self::diagonal([1.0; N])
     }
 
     pub fn determinant(&self) -> f32 {
@@ -112,17 +116,6 @@ impl<const N: usize> Matrix<N, N> {
         } else {
             None
         }
-    }
-}
-
-impl Matrix<4, 1> {
-    pub fn to_tuple(&self) -> crate::tuple::Tuple {
-        crate::tuple::Tuple::new(
-            self.data[0][0],
-            self.data[1][0],
-            self.data[2][0],
-            self.data[3][0],
-        )
     }
 }
 
@@ -172,6 +165,21 @@ impl<const N: usize, const M: usize, const K: usize> std::ops::Mul<&Matrix<M, K>
             }
         }
         Self::Output::new(res)
+    }
+}
+
+impl std::ops::Mul<crate::tuple::Tuple> for &Matrix<4, 4> {
+    type Output = crate::tuple::Tuple;
+
+    fn mul(self, rhs: crate::tuple::Tuple) -> Self::Output {
+        let rhs = Matrix::new([[rhs.x], [rhs.y], [rhs.z], [rhs.w]]);
+        let res = self * &rhs;
+        crate::tuple::Tuple::new(
+            res.data[0][0],
+            res.data[1][0],
+            res.data[2][0],
+            res.data[3][0],
+        )
     }
 }
 

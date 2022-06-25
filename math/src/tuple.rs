@@ -34,10 +34,6 @@ impl Tuple {
     pub fn normalize(self) -> Tuple {
         self / self.len()
     }
-
-    pub fn to_matrix(self) -> crate::matrix::Matrix<4, 1> {
-        crate::matrix::Matrix::new([[self.x], [self.y], [self.z], [self.w]])
-    }
 }
 
 impl std::ops::Add for Tuple {
