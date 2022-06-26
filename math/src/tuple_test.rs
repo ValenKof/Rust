@@ -128,3 +128,37 @@ fn test_cross_product_of_two_vector() {
     assert_eq!(cross(a, b), vector(-1, 2, -1));
     assert_eq!(cross(b, a), vector(1, -2, 1));
 }
+
+#[test]
+fn test_tuple_from_point() {
+    let p = Point::new(4.3, -4.2, 3.1);
+    assert_eq!(p.x, 4.3);
+    assert_eq!(p.y, -4.2);
+    assert_eq!(p.z, 3.1);
+    assert_eq!(Tuple::from(p), Tuple::new(4.3, -4.2, 3.1, 1.0));
+}
+
+#[test]
+fn test_point_from_tuple() {
+    let t0 = tuple(4, 3, 2, 0);
+    let t1 = tuple(4, 3, 2, 1);
+    assert_eq!(Point::try_from(t0), Err("Tuple has w != 1"));
+    assert_eq!(Point::try_from(t1), Ok(Point::new(4.0, 3.0, 2.0)));
+}
+
+#[test]
+fn test_vector_struct() {
+    let v = Vector::new(4.3, -4.2, 3.1);
+    assert_eq!(v.x, 4.3);
+    assert_eq!(v.y, -4.2);
+    assert_eq!(v.z, 3.1);
+    assert_eq!(Tuple::from(v), Tuple::new(4.3, -4.2, 3.1, 0.0));
+}
+
+#[test]
+fn test_vector_from_tuple() {
+    let t0 = tuple(4, 3, 2, 0);
+    let t1 = tuple(4, 3, 2, 1);
+    assert_eq!(Vector::try_from(t0), Ok(Vector::new(4.0, 3.0, 2.0)));
+    assert_eq!(Vector::try_from(t1), Err("Tuple has w != 0"));
+}
