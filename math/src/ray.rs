@@ -15,13 +15,8 @@ impl Ray {
     }
 }
 
-pub trait Intersect {
-    fn intersect(&self, r: &Ray) -> Vec<f32>;
-}
-
 #[cfg(test)]
 mod tests {
-
     use super::*;
     use crate::tuple::{Point, Vector};
 

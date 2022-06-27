@@ -1,7 +1,9 @@
-use crate::ray::{Intersect, Ray};
+use crate::intersect::{Intersect, Intersection, Intersections};
+use crate::ray::Ray;
 use crate::tuple::{dot, Point, Tuple};
 
-struct Sphere {
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub struct Sphere {
     pub center: Point,
     pub radius: f32,
 }
@@ -15,8 +17,10 @@ impl Sphere {
     }
 }
 
-impl Intersect for Sphere {
-    fn intersect(&self, r: &Ray) -> Vec<f32> {
+impl<'a> Intersect for &'a Sphere {
+    type Output = Intersections<'a, Sphere>;
+
+    fn intersect(self, r: &Ray) -> Self::Output {
         let origin = Tuple::from(r.origin) - Tuple::from(self.center);
         let direction = Tuple::from(r.direction);
 
@@ -26,9 +30,12 @@ impl Intersect for Sphere {
 
         let d = (b * b - a * c).sqrt();
         if d.is_nan() {
-            Vec::new()
+            vec![]
         } else {
-            vec![(-b - d) / a, (-b + d) / a]
+            vec![
+                Intersection::new(self, (-b - d) / a),
+                Intersection::new(self, (-b + d) / a),
+            ]
         }
     }
 }
@@ -37,28 +44,37 @@ impl Intersect for Sphere {
 mod tests {
 
     use super::*;
-    use crate::ray::{Intersect, Ray};
+    use crate::intersect::Intersect;
+    use crate::ray::Ray;
     use crate::tuple::{Point, Vector};
 
     #[test]
     fn test_ray_intersects_sphere_at_two_points() {
         let r = Ray::new(Point::new(0., 0., -5.), Vector::new(0., 0., 1.));
         let s = Sphere::new();
-        assert_eq!(s.intersect(&r), vec![4.0, 6.0]);
+        assert_eq!(
+            s.intersect(&r),
+            vec![Intersection::new(&s, 4.0), Intersection::new(&s, 6.0)]
+        );
     }
-
     #[test]
     fn test_sphere_behind_ray() {
         let r = Ray::new(Point::new(0., 0., 5.), Vector::new(0., 0., 1.));
         let s = Sphere::new();
-        assert_eq!(s.intersect(&r), vec![-6.0, -4.0]);
+        assert_eq!(
+            s.intersect(&r),
+            vec![Intersection::new(&s, -6.0), Intersection::new(&s, -4.0)]
+        );
     }
 
     #[test]
     fn test_intersect_at_point() {
         let r = Ray::new(Point::new(1., 5., 0.), Vector::new(0., 1., 0.));
         let s = Sphere::new();
-        assert_eq!(s.intersect(&r), vec![-5.0, -5.0]);
+        assert_eq!(
+            s.intersect(&r),
+            vec![Intersection::new(&s, -5.0), Intersection::new(&s, -5.0)]
+        );
     }
 
     #[test]
