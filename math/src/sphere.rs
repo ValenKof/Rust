@@ -1,4 +1,4 @@
-use crate::intersect::{Intersect, Intersection, Intersections};
+use crate::intersect::{Intersect, Intersection};
 use crate::ray::Ray;
 use crate::tuple::{dot, Point, Tuple};
 
@@ -18,7 +18,7 @@ impl Sphere {
 }
 
 impl<'a> Intersect for &'a Sphere {
-    type Output = Intersections<'a, Sphere>;
+    type Output = Vec<Intersection<&'a Sphere>>;
 
     fn intersect(self, r: &Ray) -> Self::Output {
         let origin = Tuple::from(r.origin) - Tuple::from(self.center);
@@ -42,7 +42,6 @@ impl<'a> Intersect for &'a Sphere {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
     use crate::intersect::Intersect;
     use crate::ray::Ray;

@@ -1,27 +1,19 @@
 use crate::ray::Ray;
 
-#[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Intersection<'a, T>
-where
-    &'a T: Intersect,
-{
-    pub object: &'a T,
-    pub t: f32,
-}
-
-pub type Intersections<'a, T> = Vec<Intersection<'a, T>>;
-
 pub trait Intersect {
     type Output;
 
     fn intersect(self, r: &Ray) -> Self::Output;
 }
 
-impl<'a, T> Intersection<'a, T>
-where
-    &'a T: Intersect,
-{
-    pub fn new(object: &'a T, t: f32) -> Intersection<'a, T> {
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub struct Intersection<T: Intersect> {
+    pub object: T,
+    pub t: f32,
+}
+
+impl<T: Intersect> Intersection<T> {
+    pub fn new(object: T, t: f32) -> Intersection<T> {
         Intersection { object, t }
     }
 }
@@ -45,7 +37,7 @@ mod tests {
         let s = Sphere::new();
         let i1 = Intersection::new(&s, 1.0);
         let i2 = Intersection::new(&s, 2.0);
-        let xs: Intersections<_> = vec![i1, i2];
+        let xs: Vec<Intersection<&Sphere>> = vec![i1, i2];
         assert_eq!(xs.len(), 2);
         assert_eq!(xs[0].t, 1.0);
         assert_eq!(xs[1].t, 2.0);
