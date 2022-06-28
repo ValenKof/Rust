@@ -6,7 +6,7 @@ fn main() {
             println!(
                 "Checking {}: {}PRIME",
                 p,
-                if primes::is_prime(p) { "" } else { "NOT " }
+                if samples::is_prime(p) { "" } else { "NOT " }
             );
         } else {
             println!("Skipping '{}'", arg);
