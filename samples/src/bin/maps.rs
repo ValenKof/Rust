@@ -26,12 +26,12 @@ fn main() {
     assert_eq!(freq.remove(&3), None);
 
     for _ in 0..3 {
-        let x: i32 = 256;
-        print!("freq[{}] = {}, ", x, *freq.get(&x).unwrap_or(&0));
-        if let Entry::Occupied(mut e) = freq.entry(256) {
+        const NUM: i32 = 256;
+        print!("freq[{}] = {}, ", NUM, *freq.get(&NUM).unwrap_or(&0));
+        if let Entry::Occupied(mut e) = freq.entry(NUM) {
             if *e.get() % 2 == 0 {
                 println!("increment");
-                *e.get_mut() += 1
+                *e.get_mut() += 1;
             } else {
                 println!("remove");
                 e.remove();
