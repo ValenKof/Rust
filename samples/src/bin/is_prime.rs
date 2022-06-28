@@ -1,3 +1,4 @@
+use samples::primes;
 use std::str::FromStr;
 
 fn main() {
@@ -6,7 +7,7 @@ fn main() {
             println!(
                 "Checking {}: {}PRIME",
                 p,
-                if samples::is_prime(p) { "" } else { "NOT " }
+                if primes::is_prime(p) { "" } else { "NOT " }
             );
         } else {
             println!("Skipping '{}'", arg);
