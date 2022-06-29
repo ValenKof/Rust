@@ -1,3 +1,5 @@
+use crate::matrix::Matrix;
+use crate::transforms::Transform;
 use crate::tuple::{Point, Tuple, Vector};
 
 pub struct Ray {
@@ -15,9 +17,19 @@ impl Ray {
     }
 }
 
+impl Transform for Ray {
+    fn apply(&self, t: &Matrix<4, 4>) -> Self {
+        Ray::new(
+            Point::try_from(Tuple::from(self.origin).apply(t)).unwrap(),
+            Vector::try_from(Tuple::from(self.direction).apply(t)).unwrap(),
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::transforms::Transform;
     use crate::tuple::{Point, Vector};
 
     #[test]
@@ -36,5 +48,21 @@ mod tests {
         assert_eq!(r.position(1.0), Point::new(3., 3., 4.));
         assert_eq!(r.position(-1.0), Point::new(1., 3., 4.));
         assert_eq!(r.position(2.5), Point::new(4.5, 3., 4.));
+    }
+
+    #[test]
+    fn test_translate_ray() {
+        let r = Ray::new(Point::new(1., 2., 3.), Vector::new(0., 1., 0.));
+        let r2 = r.translate(3., 4., 5.);
+        assert_eq!(r2.origin, Point::new(4., 6., 8.));
+        assert_eq!(r2.direction, Vector::new(0., 1., 0.));
+    }
+
+    #[test]
+    fn test_scale_ray() {
+        let r = Ray::new(Point::new(1., 2., 3.), Vector::new(0., 1., 0.));
+        let r2 = r.scale(2., 3., 4.);
+        assert_eq!(r2.origin, Point::new(2., 6., 12.));
+        assert_eq!(r2.direction, Vector::new(0., 3., 0.));
     }
 }

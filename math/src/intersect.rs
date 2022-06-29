@@ -18,6 +18,12 @@ impl<T: Intersect> Intersection<T> {
     }
 }
 
+pub fn hit<T: Intersect>(xs: &[Intersection<T>]) -> Option<&Intersection<T>> {
+    xs.iter()
+        .filter(|x| x.t > 0.0)
+        .reduce(|x, y| if x.t < y.t { x } else { y })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -41,5 +47,43 @@ mod tests {
         assert_eq!(xs.len(), 2);
         assert_eq!(xs[0].t, 1.0);
         assert_eq!(xs[1].t, 2.0);
+    }
+
+    #[test]
+    fn test_hit_all_positive() {
+        let s = Sphere::new();
+        let i1 = Intersection::new(&s, 1.0);
+        let i2 = Intersection::new(&s, 2.0);
+        let xs: Vec<Intersection<&Sphere>> = vec![i2, i1];
+        assert_eq!(hit(&xs), Some(&i1));
+    }
+
+    #[test]
+    fn test_hit_mixed() {
+        let s = Sphere::new();
+        let i1 = Intersection::new(&s, -1.0);
+        let i2 = Intersection::new(&s, 1.0);
+        let xs: Vec<Intersection<&Sphere>> = vec![i2, i1];
+        assert_eq!(hit(&xs), Some(&i2));
+    }
+
+    #[test]
+    fn test_hit_all_negative() {
+        let s = Sphere::new();
+        let i1 = Intersection::new(&s, -2.0);
+        let i2 = Intersection::new(&s, -1.0);
+        let xs: Vec<Intersection<&Sphere>> = vec![i2, i1];
+        assert_eq!(hit(&xs), None);
+    }
+
+    #[test]
+    fn test_hit_returns_lowest_non_negative() {
+        let s = Sphere::new();
+        let i1 = Intersection::new(&s, 5.0);
+        let i2 = Intersection::new(&s, 7.0);
+        let i3 = Intersection::new(&s, -3.0);
+        let i4 = Intersection::new(&s, 2.0);
+        let xs: Vec<Intersection<&Sphere>> = vec![i1, i2, i3, i4];
+        assert_eq!(hit(&xs), Some(&i4));
     }
 }
