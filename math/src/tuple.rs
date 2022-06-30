@@ -109,7 +109,7 @@ impl std::ops::Div<f32> for Tuple {
 }
 
 pub fn dot(a: Tuple, b: Tuple) -> f32 {
-    a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w
+    a.x * b.x + a.y * b.y + a.z * b.z
 }
 
 pub fn cross(a: Tuple, b: Tuple) -> Tuple {

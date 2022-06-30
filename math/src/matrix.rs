@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Matrix<const N: usize, const M: usize> {
     data: [[f32; M]; N],
 }
