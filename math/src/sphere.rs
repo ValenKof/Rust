@@ -19,6 +19,14 @@ impl Sphere {
     pub fn set_transform(&mut self, transform: Matrix<4, 4>) {
         self.transform = transform;
     }
+
+    pub fn normal_at(&self, world_point: Tuple) -> Tuple {
+        let object_point = world_point.apply(&self.transform.inverse().unwrap());
+        let object_normal = object_point - Tuple::point(0., 0., 0.);
+        let mut world_normal = object_normal.apply(&self.transform.inverse().unwrap().transpose());
+        world_normal.w = 0.;
+        world_normal.normalize()
+    }
 }
 
 impl<'a> Intersect for &'a Sphere {
@@ -51,6 +59,7 @@ mod tests {
     use crate::intersect::Intersect;
     use crate::matrix::Matrix;
     use crate::ray::Ray;
+    use crate::test_utils::*;
     use crate::transforms::{scaling, translation};
     use crate::tuple::{Point, Vector};
 
@@ -128,5 +137,19 @@ mod tests {
         let mut s = Sphere::new();
         s.set_transform(translation(5., 0., 0.));
         assert_eq!(s.intersect(&r), vec![]);
+    }
+
+    #[test]
+    fn test_normal_xyz() {
+        assert_eq!(Sphere::new().normal_at(point(1, 0, 0)), vector(1, 0, 0));
+        assert_eq!(Sphere::new().normal_at(point(0, 1, 0)), vector(0, 1, 0));
+        assert_eq!(Sphere::new().normal_at(point(0, 0, 1)), vector(0, 0, 1));
+    }
+
+    #[test]
+    fn test_normal_nonaxial() {
+        let a = 1.0 / 3.0_f32.sqrt();
+        let n = Sphere::new().normal_at(Tuple::point(a, a, a));
+        assert_near!(n, Tuple::vector(a, a, a));
     }
 }
