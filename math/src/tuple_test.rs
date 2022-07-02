@@ -1,5 +1,6 @@
 use super::*;
 use crate::test_utils::*;
+use std::f32::consts::FRAC_1_SQRT_2;
 
 #[test]
 fn test_create_tuple_with_w_equal_to_1() {
@@ -161,4 +162,18 @@ fn test_vector_from_tuple() {
     let t1 = tuple(4, 3, 2, 1);
     assert_eq!(Vector::try_from(t0), Ok(Vector::new(4.0, 3.0, 2.0)));
     assert_eq!(Vector::try_from(t1), Err("Tuple has w != 0"));
+}
+
+#[test]
+fn test_reflect_vector_at_45_angle() {
+    let v = vector(1, -1, 0);
+    let n = vector(0, 1, 0);
+    assert_eq!(v.reflect(n), vector(1, 1, 0));
+}
+
+#[test]
+fn test_reflect_vector_off_slanted_surface() {
+    let v = vector(0, -1, 0);
+    let n = Tuple::vector(FRAC_1_SQRT_2, FRAC_1_SQRT_2, 0.0);
+    assert_near!(v.reflect(n), vector(1, 0, 0));
 }

@@ -1,4 +1,5 @@
 use crate::intersect::{Intersect, Intersection};
+use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::transforms::Transform;
@@ -7,12 +8,14 @@ use crate::tuple::{dot, Tuple};
 #[derive(Debug, PartialEq)]
 pub struct Sphere {
     transform: Matrix<4, 4>,
+    pub material: Material,
 }
 
 impl Sphere {
     pub fn new() -> Sphere {
         Sphere {
             transform: Matrix::identity(),
+            material: Material::new(),
         }
     }
 
@@ -60,8 +63,9 @@ mod tests {
     use crate::matrix::Matrix;
     use crate::ray::Ray;
     use crate::test_utils::*;
-    use crate::transforms::{scaling, translation};
+    use crate::transforms::{rotation_z, scaling, translation};
     use crate::tuple::{Point, Vector};
+    use std::f32::consts::{PI, SQRT_2};
 
     #[test]
     fn test_ray_intersects_sphere_at_two_points() {
@@ -151,5 +155,35 @@ mod tests {
         let a = 1.0 / 3.0_f32.sqrt();
         let n = Sphere::new().normal_at(Tuple::point(a, a, a));
         assert_near!(n, Tuple::vector(a, a, a));
+    }
+
+    #[test]
+    fn test_normal_of_translated_sphere() {
+        let mut s = Sphere::new();
+        s.set_transform(translation(0., 1., 0.));
+        let n = s.normal_at(Tuple::point(0.0, 1.70711, -0.70711));
+        assert_near!(n, Tuple::vector(0.0, 0.70711, -0.70711));
+    }
+
+    #[test]
+    fn test_normal_of_transformedsphere() {
+        let mut s = Sphere::new();
+        s.set_transform(&scaling(1.0, 0.5, 1.0) * &rotation_z(PI / 5.0));
+        let n = s.normal_at(Tuple::point(0.0, SQRT_2 / 2.0, -SQRT_2 / 2.0));
+        assert_near!(n, Tuple::vector(0.0, 0.97014, -0.24254));
+    }
+
+    #[test]
+    fn test_default_material() {
+        assert_eq!(Sphere::new().material, Material::new());
+    }
+
+    #[test]
+    fn test_assigned_material() {
+        let mut s = Sphere::new();
+        let mut m = Material::new();
+        m.ambient = 1.0;
+        s.material = m;
+        assert_eq!(s.material, m);
     }
 }

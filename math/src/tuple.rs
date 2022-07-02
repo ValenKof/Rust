@@ -38,6 +38,10 @@ impl Tuple {
     pub fn normalize(self) -> Tuple {
         self / self.len()
     }
+
+    pub fn reflect(self, normal: Tuple) -> Tuple {
+        self - normal * (2. * dot(self, normal))
+    }
 }
 
 impl std::ops::Add for Tuple {
