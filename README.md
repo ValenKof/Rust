@@ -14,6 +14,7 @@ To build raytracer and draw sample images:
 git clone https://github.com/ValenKof/Rust.git && cd Rust && cargo test
 cargo run --bin projectile  # draw projectile trajectory
 cargo run --bin clock       # draw clock dial
+cargo run --bin sphere      # draw sphere
 ```
 
 To run rust code sample:
