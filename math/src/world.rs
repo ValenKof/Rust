@@ -1,11 +1,18 @@
-use crate::intersect::Intersect;
+use crate::intersect::{Intersect, Intersection};
 use crate::material::Material;
 use crate::ray::Ray;
+use crate::sphere::Sphere;
 use crate::tuple::Tuple;
 
-pub trait WorldObject {
+#[derive(PartialEq)]
+pub enum WorldObjectRef<'a> {
+    Sphere(&'a Sphere),
+}
+
+pub trait WorldObject: std::fmt::Debug {
     fn normal_at(&self, world_point: Tuple) -> Tuple;
     fn material_at(&self, world_point: Tuple) -> Material;
+    fn as_ref(&self) -> WorldObjectRef;
 }
 
 pub struct World {
@@ -18,13 +25,6 @@ impl World {
             objects: Vec::new(),
         }
     }
-}
 
-impl<'a> Intersect for &'a World {
-    type Output = Option<&'a dyn WorldObject>;
-
-    fn intersect(self, _r: &Ray) -> Self::Output {
-        for obj in self.objects.iter() {}
-        None
-    }
+    pub fn intersect(&self, r: &Ray) {}
 }

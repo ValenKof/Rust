@@ -1,33 +1,37 @@
 use crate::ray::Ray;
 use crate::world::WorldObject;
 
-pub trait Intersect {
-    type Output;
-
-    fn intersect(self, r: &Ray) -> Self::Output;
-}
-
-#[derive(Debug, PartialEq)]
-pub struct Intersection<'a, T: WorldObject> {
-    pub object: &'a T,
+#[derive(Debug)]
+pub struct Intersection<'a> {
+    pub object: &'a dyn WorldObject,
     pub t: f32,
 }
 
-impl<'a, T: WorldObject> Copy for Intersection<'a, T> {}
+impl<'a> PartialEq for Intersection<'a> {
+    fn eq(&self, other: &Self) -> bool {
+        self.t == other.t && self.object.as_ref() == other.object.as_ref()
+    }
+}
 
-impl<'a, T: WorldObject> Clone for Intersection<'a, T> {
+impl<'a> Copy for Intersection<'a> {}
+
+impl<'a> Clone for Intersection<'a> {
     fn clone(&self) -> Self {
         *self
     }
 }
 
-impl<'a, T: WorldObject> Intersection<'a, T> {
-    pub fn new(object: &'a T, t: f32) -> Intersection<'a, T> {
+impl<'a> Intersection<'a> {
+    pub fn new(object: &'a dyn WorldObject, t: f32) -> Intersection<'a> {
         Intersection { object, t }
     }
 }
 
-pub fn hit<'a, T: WorldObject + Clone>(xs: &[Intersection<'a, T>]) -> Option<Intersection<'a, T>> {
+pub trait Intersect {
+    fn intersect<'a>(&'a self, r: &Ray) -> Vec<Intersection<'a>>;
+}
+
+pub fn hit<'a>(xs: &[Intersection<'a>]) -> Option<Intersection<'a>> {
     xs.iter()
         .map(|x| *x)
         .filter(|x| x.t > 0.0)
@@ -43,7 +47,7 @@ mod tests {
     fn test_create_intersection() {
         let s = Sphere::new();
         let i = Intersection::new(&s, 3.5);
-        assert_eq!(i.object as *const Sphere, &s as *const Sphere);
+        assert!(std::ptr::eq(i.object, &s));
         assert_eq!(i.t, 3.5);
     }
 
@@ -52,7 +56,7 @@ mod tests {
         let s = Sphere::new();
         let i1 = Intersection::new(&s, 1.0);
         let i2 = Intersection::new(&s, 2.0);
-        let xs: Vec<Intersection<Sphere>> = vec![i1, i2];
+        let xs: Vec<Intersection> = vec![i1, i2];
         assert_eq!(xs.len(), 2);
         assert_eq!(xs[0].t, 1.0);
         assert_eq!(xs[1].t, 2.0);
@@ -63,7 +67,7 @@ mod tests {
         let s = Sphere::new();
         let i1 = Intersection::new(&s, 1.0);
         let i2 = Intersection::new(&s, 2.0);
-        let xs: Vec<Intersection<Sphere>> = vec![i2, i1];
+        let xs: Vec<Intersection> = vec![i2, i1];
         assert_eq!(hit(&xs), Some(i1));
     }
 
@@ -72,7 +76,7 @@ mod tests {
         let s = Sphere::new();
         let i1 = Intersection::new(&s, -1.0);
         let i2 = Intersection::new(&s, 1.0);
-        let xs: Vec<Intersection<Sphere>> = vec![i2, i1];
+        let xs: Vec<Intersection> = vec![i2, i1];
         assert_eq!(hit(&xs), Some(i2));
     }
 
@@ -81,7 +85,7 @@ mod tests {
         let s = Sphere::new();
         let i1 = Intersection::new(&s, -2.0);
         let i2 = Intersection::new(&s, -1.0);
-        let xs: Vec<Intersection<Sphere>> = vec![i2, i1];
+        let xs: Vec<Intersection> = vec![i2, i1];
         assert_eq!(hit(&xs), None);
     }
 
@@ -92,7 +96,7 @@ mod tests {
         let i2 = Intersection::new(&s, 7.0);
         let i3 = Intersection::new(&s, -3.0);
         let i4 = Intersection::new(&s, 2.0);
-        let xs: Vec<Intersection<Sphere>> = vec![i1, i2, i3, i4];
+        let xs: Vec<Intersection> = vec![i1, i2, i3, i4];
         assert_eq!(hit(&xs), Some(i4));
     }
 }

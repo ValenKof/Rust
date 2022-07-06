@@ -4,9 +4,9 @@ use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::transforms::Transform;
 use crate::tuple::{dot, Tuple};
-use crate::world::WorldObject;
+use crate::world::{WorldObject, WorldObjectRef};
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq)]
 pub struct Sphere {
     transform: Matrix<4, 4>,
     material: Material,
@@ -41,12 +41,14 @@ impl WorldObject for Sphere {
     fn material_at(&self, _world_point: Tuple) -> Material {
         self.material
     }
+
+    fn as_ref(&self) -> WorldObjectRef {
+        return WorldObjectRef::Sphere(self);
+    }
 }
 
-impl<'a> Intersect for &'a Sphere {
-    type Output = Vec<Intersection<'a, Sphere>>;
-
-    fn intersect(self, r: &Ray) -> Self::Output {
+impl Intersect for Sphere {
+    fn intersect<'a>(&'a self, r: &Ray) -> Vec<Intersection<'a>> {
         let r = r.apply(&self.transform.inverse().unwrap());
         let origin = Tuple::from(r.origin);
         let direction = Tuple::from(r.direction);

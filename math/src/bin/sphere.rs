@@ -8,7 +8,6 @@ use math::material::Material;
 use math::ray::Ray;
 use math::sphere::Sphere;
 use math::tuple::{Point, Tuple, Vector};
-use math::world::WorldObject;
 
 const SIZE: usize = 500;
 const WALL_Z: f32 = 10.0;
