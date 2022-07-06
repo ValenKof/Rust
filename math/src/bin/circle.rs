@@ -1,10 +1,11 @@
 use math::canvas::Canvas;
 use math::color::Color;
 use math::image::Image;
-use math::intersect::{hit, Intersect};
+use math::intersect::hit;
 use math::ray::Ray;
 use math::sphere::Sphere;
 use math::tuple::{Point, Tuple, Vector};
+use math::world::WorldObjectRef;
 
 const SIZE: usize = 500;
 const WALL_Z: f32 = 10.0;
@@ -27,7 +28,7 @@ fn main() {
                 Vector::try_from((Tuple::from(wall) - Tuple::from(ray_origin)).normalize())
                     .unwrap(),
             );
-            let xs = s.intersect(&r);
+            let xs = WorldObjectRef::Sphere(&s).intersect(&r);
             if let Some(_) = hit(&xs) {
                 canvas.set(x, y, Color::white());
             }

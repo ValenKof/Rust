@@ -1,10 +1,8 @@
-use crate::intersect::{Intersect, Intersection};
 use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::transforms::Transform;
 use crate::tuple::{dot, Tuple};
-use crate::world::{WorldObject, WorldObjectRef};
 
 #[derive(Debug, PartialEq)]
 pub struct Sphere {
@@ -27,28 +25,8 @@ impl Sphere {
     pub fn set_material(&mut self, material: Material) {
         self.material = material;
     }
-}
 
-impl WorldObject for Sphere {
-    fn normal_at(&self, world_point: Tuple) -> Tuple {
-        let object_point = world_point.apply(&self.transform.inverse().unwrap());
-        let object_normal = object_point - Tuple::point(0., 0., 0.);
-        let mut world_normal = object_normal.apply(&self.transform.inverse().unwrap().transpose());
-        world_normal.w = 0.;
-        world_normal.normalize()
-    }
-
-    fn material_at(&self, _world_point: Tuple) -> Material {
-        self.material
-    }
-
-    fn as_ref(&self) -> WorldObjectRef {
-        return WorldObjectRef::Sphere(self);
-    }
-}
-
-impl Intersect for Sphere {
-    fn intersect<'a>(&'a self, r: &Ray) -> Vec<Intersection<'a>> {
+    pub fn intersect(&self, r: &Ray) -> Vec<f32> {
         let r = r.apply(&self.transform.inverse().unwrap());
         let origin = Tuple::from(r.origin);
         let direction = Tuple::from(r.direction);
@@ -61,53 +39,51 @@ impl Intersect for Sphere {
         if d.is_nan() {
             vec![]
         } else {
-            vec![
-                Intersection::new(self, (-b - d) / a),
-                Intersection::new(self, (-b + d) / a),
-            ]
+            vec![(-b - d) / a, (-b + d) / a]
         }
+    }
+
+    pub fn normal_at(&self, world_point: Tuple) -> Tuple {
+        let object_point = world_point.apply(&self.transform.inverse().unwrap());
+        let object_normal = object_point - Tuple::point(0., 0., 0.);
+        let mut world_normal = object_normal.apply(&self.transform.inverse().unwrap().transpose());
+        world_normal.w = 0.;
+        world_normal.normalize()
+    }
+
+    pub fn material_at(&self, _world_point: Tuple) -> Material {
+        self.material
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::intersect::Intersect;
     use crate::matrix::Matrix;
     use crate::ray::Ray;
     use crate::test_utils::*;
     use crate::transforms::{rotation_z, scaling, translation};
     use crate::tuple::{Point, Vector};
-    use crate::world::WorldObject;
     use std::f32::consts::{PI, SQRT_2};
 
     #[test]
     fn test_ray_intersects_sphere_at_two_points() {
         let r = Ray::new(Point::new(0., 0., -5.), Vector::new(0., 0., 1.));
         let s = Sphere::new();
-        assert_eq!(
-            s.intersect(&r),
-            vec![Intersection::new(&s, 4.0), Intersection::new(&s, 6.0)]
-        );
+        assert_eq!(s.intersect(&r), vec![4.0, 6.0]);
     }
     #[test]
     fn test_sphere_behind_ray() {
         let r = Ray::new(Point::new(0., 0., 5.), Vector::new(0., 0., 1.));
         let s = Sphere::new();
-        assert_eq!(
-            s.intersect(&r),
-            vec![Intersection::new(&s, -6.0), Intersection::new(&s, -4.0)]
-        );
+        assert_eq!(s.intersect(&r), vec![-6.0, -4.0]);
     }
 
     #[test]
     fn test_intersect_at_point() {
         let r = Ray::new(Point::new(1., 5., 0.), Vector::new(0., 1., 0.));
         let s = Sphere::new();
-        assert_eq!(
-            s.intersect(&r),
-            vec![Intersection::new(&s, -5.0), Intersection::new(&s, -5.0)]
-        );
+        assert_eq!(s.intersect(&r), vec![-5.0, -5.0]);
     }
 
     #[test]
@@ -143,10 +119,7 @@ mod tests {
         let r = Ray::new(Point::new(0., 0., -5.), Vector::new(0., 0., 1.));
         let mut s = Sphere::new();
         s.set_transform(scaling(2., 2., 2.));
-        assert_eq!(
-            s.intersect(&r),
-            vec![Intersection::new(&s, 3.0), Intersection::new(&s, 7.0)]
-        );
+        assert_eq!(s.intersect(&r), vec![3.0, 7.0]);
     }
 
     #[test]
