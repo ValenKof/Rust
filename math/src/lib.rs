@@ -11,6 +11,7 @@ pub mod ray;
 pub mod sphere;
 pub mod transforms;
 pub mod tuple;
+pub mod world;
 
 #[cfg(test)]
 mod test_utils;

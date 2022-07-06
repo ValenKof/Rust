@@ -8,6 +8,7 @@ use math::material::Material;
 use math::ray::Ray;
 use math::sphere::Sphere;
 use math::tuple::{Point, Tuple, Vector};
+use math::world::WorldObject;
 
 const SIZE: usize = 500;
 const WALL_Z: f32 = 10.0;
@@ -19,8 +20,11 @@ fn main() {
     let ray_origin = Point::new(0., 0., -5.);
 
     let mut s = Sphere::new();
-    s.material = Material::new();
-    s.material.color = Color::new(1.0, 0.2, 1.0);
+    s.set_material({
+        let mut m = Material::new();
+        m.color = Color::new(1.0, 0.2, 1.0);
+        m
+    });
 
     let light = PointLight {
         position: Tuple::point(-10., 10., -10.),
@@ -41,9 +45,14 @@ fn main() {
             let xs = s.intersect(&r);
             if let Some(h) = hit(&xs) {
                 let point = Tuple::from(r.position(h.t));
-                let normal = h.object.normal_at(Tuple::from(point));
                 let eye = -Tuple::from(r.direction);
-                let color = lighting::phong(&h.object.material, &light, point, eye, normal);
+                let color = lighting::phong(
+                    h.object.material_at(point),
+                    &light,
+                    point,
+                    eye,
+                    h.object.normal_at(point),
+                );
                 canvas.set(x, y, color);
             }
         }

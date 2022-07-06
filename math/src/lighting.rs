@@ -3,7 +3,7 @@ use crate::light::PointLight;
 use crate::material::Material;
 use crate::tuple::{dot, Tuple};
 
-pub fn phong(m: &Material, l: &PointLight, pos: Tuple, v: Tuple, n: Tuple) -> Color {
+pub fn phong(m: Material, l: &PointLight, pos: Tuple, v: Tuple, n: Tuple) -> Color {
     let i = m.color * l.intensity;
 
     let lm = (l.position - pos).normalize();
@@ -46,7 +46,7 @@ mod tests {
         let eye_vec = vector(0, 0, -1);
         let normal_vec = vector(0, 0, -1);
         let light = PointLight::new(point(0, 0, -10), Color::new(1., 1., 1.));
-        let result = phong(&m, &light, pos, eye_vec, normal_vec);
+        let result = phong(m, &light, pos, eye_vec, normal_vec);
         assert_eq!(result, Color::new(1.9, 1.9, 1.9));
     }
 
@@ -57,7 +57,7 @@ mod tests {
         let eye_vec = Tuple::vector(0.0, FRAC_1_SQRT_2, -FRAC_1_SQRT_2);
         let normal_vec = vector(0, 0, -1);
         let light = PointLight::new(point(0, 0, -10), Color::new(1., 1., 1.));
-        let result = phong(&m, &light, pos, eye_vec, normal_vec);
+        let result = phong(m, &light, pos, eye_vec, normal_vec);
         assert_eq!(result, Color::new(1.0, 1.0, 1.0));
     }
 
@@ -68,7 +68,7 @@ mod tests {
         let eye_vec = vector(0, 0, -1);
         let normal_vec = vector(0, 0, -1);
         let light = PointLight::new(point(0, 10, -10), Color::new(1., 1., 1.));
-        let result = phong(&m, &light, pos, eye_vec, normal_vec);
+        let result = phong(m, &light, pos, eye_vec, normal_vec);
         assert_near!(result, Color::new(0.7364, 0.7364, 0.7364));
     }
 
@@ -79,7 +79,7 @@ mod tests {
         let eye_vec = Tuple::vector(0.0, -FRAC_1_SQRT_2, -FRAC_1_SQRT_2);
         let normal_vec = vector(0, 0, -1);
         let light = PointLight::new(point(0, 10, -10), Color::new(1., 1., 1.));
-        let result = phong(&m, &light, pos, eye_vec, normal_vec);
+        let result = phong(m, &light, pos, eye_vec, normal_vec);
         assert_near!(result, Color::new(1.6364, 1.6364, 1.6364));
     }
 
@@ -90,7 +90,7 @@ mod tests {
         let eye_vec = vector(0, 0, -1);
         let normal_vec = vector(0, 0, -1);
         let light = PointLight::new(point(0, 0, 10), Color::new(1., 1., 1.));
-        let result = phong(&m, &light, pos, eye_vec, normal_vec);
+        let result = phong(m, &light, pos, eye_vec, normal_vec);
         assert_eq!(result, Color::new(0.1, 0.1, 0.1));
     }
 }

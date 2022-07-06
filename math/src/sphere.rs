@@ -4,11 +4,12 @@ use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::transforms::Transform;
 use crate::tuple::{dot, Tuple};
+use crate::world::WorldObject;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Sphere {
     transform: Matrix<4, 4>,
-    pub material: Material,
+    material: Material,
 }
 
 impl Sphere {
@@ -23,17 +24,27 @@ impl Sphere {
         self.transform = transform;
     }
 
-    pub fn normal_at(&self, world_point: Tuple) -> Tuple {
+    pub fn set_material(&mut self, material: Material) {
+        self.material = material;
+    }
+}
+
+impl WorldObject for Sphere {
+    fn normal_at(&self, world_point: Tuple) -> Tuple {
         let object_point = world_point.apply(&self.transform.inverse().unwrap());
         let object_normal = object_point - Tuple::point(0., 0., 0.);
         let mut world_normal = object_normal.apply(&self.transform.inverse().unwrap().transpose());
         world_normal.w = 0.;
         world_normal.normalize()
     }
+
+    fn material_at(&self, _world_point: Tuple) -> Material {
+        self.material
+    }
 }
 
 impl<'a> Intersect for &'a Sphere {
-    type Output = Vec<Intersection<&'a Sphere>>;
+    type Output = Vec<Intersection<'a, Sphere>>;
 
     fn intersect(self, r: &Ray) -> Self::Output {
         let r = r.apply(&self.transform.inverse().unwrap());
@@ -65,6 +76,7 @@ mod tests {
     use crate::test_utils::*;
     use crate::transforms::{rotation_z, scaling, translation};
     use crate::tuple::{Point, Vector};
+    use crate::world::WorldObject;
     use std::f32::consts::{PI, SQRT_2};
 
     #[test]
@@ -175,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_default_material() {
-        assert_eq!(Sphere::new().material, Material::new());
+        assert_eq!(Sphere::new().material_at(point(0, 0, 0)), Material::new());
     }
 
     #[test]
@@ -183,7 +195,7 @@ mod tests {
         let mut s = Sphere::new();
         let mut m = Material::new();
         m.ambient = 1.0;
-        s.material = m;
-        assert_eq!(s.material, m);
+        s.set_material(m);
+        assert_eq!(s.material_at(point(0, 0, 0)), m);
     }
 }
