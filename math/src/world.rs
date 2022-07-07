@@ -4,15 +4,21 @@ use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::tuple::Tuple;
 
-#[derive(Debug, PartialEq, Copy, Clone)]
-pub enum WorldObjectRef<'a> {
-    Sphere(&'a Sphere),
+pub trait Intersect {
+    fn intersect<'a>(&'a self, r: &Ray) -> Vec<Intersection<'a>>;
+    fn normal_at(&self, world_point: Tuple) -> Tuple;
+    fn material_at(&self, world_point: Tuple) -> Material;
 }
 
-impl<'a> WorldObjectRef<'a> {
-    pub fn intersect(self, r: &Ray) -> Vec<Intersection<'a>> {
+#[derive(Debug, PartialEq)]
+pub enum WorldObject {
+    Sphere(Sphere),
+}
+
+impl Intersect for WorldObject {
+    fn intersect<'a>(&'a self, r: &Ray) -> Vec<Intersection<'a>> {
         let ts = match self {
-            WorldObjectRef::Sphere(s) => s.intersect(r),
+            WorldObject::Sphere(s) => s.intersect(r),
         };
         let mut intersections = Vec::with_capacity(ts.len());
         for t in ts {
@@ -21,25 +27,21 @@ impl<'a> WorldObjectRef<'a> {
         intersections
     }
 
-    pub fn normal_at(self, world_point: Tuple) -> Tuple {
+    fn normal_at(&self, world_point: Tuple) -> Tuple {
         match self {
-            WorldObjectRef::Sphere(s) => s.normal_at(world_point),
+            WorldObject::Sphere(s) => s.normal_at(world_point),
         }
     }
 
-    pub fn material_at(self, world_point: Tuple) -> Material {
+    fn material_at(&self, world_point: Tuple) -> Material {
         match self {
-            WorldObjectRef::Sphere(s) => s.material_at(world_point),
+            WorldObject::Sphere(s) => s.material_at(world_point),
         }
     }
 }
 
-//pub trait WorldObject: std::fmt::Debug {
-//    fn as_ref(&self) -> WorldObjectRef;
-//}
-
 pub struct World {
-    objects: Vec<f32>,
+    objects: Vec<WorldObject>,
 }
 
 impl World {
@@ -49,5 +51,7 @@ impl World {
         }
     }
 
-    pub fn intersect(&self, r: &Ray) {}
+    pub fn intersect<'a>(&'a self, r: &Ray) -> Vec<Intersection<'a>> {
+        vec![]
+    }
 }

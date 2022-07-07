@@ -5,7 +5,7 @@ use math::intersect::hit;
 use math::ray::Ray;
 use math::sphere::Sphere;
 use math::tuple::{Point, Tuple, Vector};
-use math::world::WorldObjectRef;
+use math::world::{Intersect, WorldObject};
 
 const SIZE: usize = 500;
 const WALL_Z: f32 = 10.0;
@@ -15,7 +15,7 @@ const PIXEL_SIZE: f32 = WALL_SIZE / (SIZE as f32);
 fn main() {
     let mut canvas = Canvas::new(SIZE, SIZE, Color::black());
     let ray_origin = Point::new(0., 0., -5.);
-    let s = Sphere::new();
+    let s = WorldObject::Sphere(Sphere::new());
 
     for y in 0..SIZE {
         let wall_y: f32 = WALL_SIZE / 2.0 - (y as f32) * PIXEL_SIZE;
@@ -28,7 +28,7 @@ fn main() {
                 Vector::try_from((Tuple::from(wall) - Tuple::from(ray_origin)).normalize())
                     .unwrap(),
             );
-            let xs = WorldObjectRef::Sphere(&s).intersect(&r);
+            let xs = s.intersect(&r);
             if let Some(_) = hit(&xs) {
                 canvas.set(x, y, Color::white());
             }

@@ -8,7 +8,7 @@ use math::material::Material;
 use math::ray::Ray;
 use math::sphere::Sphere;
 use math::tuple::{Point, Tuple, Vector};
-use math::world::WorldObjectRef;
+use math::world::{Intersect, WorldObject};
 
 const SIZE: usize = 500;
 const WALL_Z: f32 = 10.0;
@@ -25,6 +25,7 @@ fn main() {
         m.color = Color::new(1.0, 0.2, 1.0);
         m
     });
+    let s = WorldObject::Sphere(s);
 
     let light = PointLight {
         position: Tuple::point(-10., 10., -10.),
@@ -42,7 +43,7 @@ fn main() {
                 Vector::try_from((Tuple::from(wall) - Tuple::from(ray_origin)).normalize())
                     .unwrap(),
             );
-            let xs = WorldObjectRef::Sphere(&s).intersect(&r);
+            let xs = s.intersect(&r);
             if let Some(h) = hit(&xs) {
                 let point = Tuple::from(r.position(h.t));
                 let eye = -Tuple::from(r.direction);

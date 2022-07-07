@@ -72,6 +72,7 @@ mod tests {
         let s = Sphere::new();
         assert_eq!(s.intersect(&r), vec![4.0, 6.0]);
     }
+
     #[test]
     fn test_sphere_behind_ray() {
         let r = Ray::new(Point::new(0., 0., 5.), Vector::new(0., 0., 1.));
