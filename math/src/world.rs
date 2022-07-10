@@ -1,5 +1,5 @@
 use crate::color::Color;
-use crate::intersect::Intersection;
+use crate::intersect::{hit, Intersection};
 use crate::light::PointLight;
 use crate::lighting;
 use crate::material::Material;
@@ -37,9 +37,9 @@ impl Intersect for WorldObject {
         }
     }
 
-    fn material_at(&self, world_point: Tuple) -> Material {
+    fn material_at(&self, _world_point: Tuple) -> Material {
         match self {
-            WorldObject::Sphere(s) => s.material_at(world_point),
+            WorldObject::Sphere(s) => s.material(),
         }
     }
 }
@@ -73,14 +73,15 @@ impl<'a> Computations<'a> {
 
 pub struct World {
     pub objects: Vec<WorldObject>,
-    pub light: Option<PointLight>,
+    pub lights: Vec<PointLight>,
 }
 
 impl World {
     pub fn new() -> World {
-        let objects = vec![];
-        let light = None;
-        World { objects, light }
+        World {
+            objects: vec![],
+            lights: vec![],
+        }
     }
 
     pub fn intersect<'a>(&'a self, r: &Ray) -> Vec<Intersection<'a>> {
@@ -93,22 +94,35 @@ impl World {
     }
 
     pub fn shade_hit(&self, comps: Computations) -> Color {
-        lighting::phong(
-            comps.object.material_at(comps.point),
-            &self.light.as_ref().unwrap(),
-            comps.point,
-            comps.eye_vec,
-            comps.normal_vec,
-        )
+        let mut c = Color::black();
+        for light in &self.lights {
+            c = c + lighting::phong(
+                comps.object.material_at(comps.point),
+                light,
+                comps.point,
+                comps.eye_vec,
+                comps.normal_vec,
+            );
+        }
+        c
+    }
+
+    pub fn color_at(&self, r: &Ray) -> Color {
+        let xs = self.intersect(r);
+        if let Some(x) = hit(&xs) {
+            self.shade_hit(Computations::new(x, r))
+        } else {
+            Color::black()
+        }
     }
 }
 
 pub fn default_world() -> World {
     let mut w = World::new();
-    w.light = Some(PointLight::new(
+    w.lights = vec![PointLight::new(
         Tuple::point(-10., -10., -10.),
         Color::new(1., 1., 1.),
-    ));
+    )];
     w.objects.push(WorldObject::Sphere({
         let mut s = Sphere::new();
         s.set_material({
@@ -144,7 +158,7 @@ mod tests {
     fn test_create_world() {
         let w = World::new();
         assert_eq!(w.objects, vec![]);
-        assert_eq!(w.light, None);
+        assert_eq!(w.lights, vec![]);
     }
 
     #[test]
@@ -167,7 +181,7 @@ mod tests {
             s
         });
         let light = PointLight::new(point(-10, -10, -10), Color::new(1., 1., 1.));
-        assert_eq!(w.light, Some(light));
+        assert_eq!(w.lights, vec![light]);
         assert_eq!(w.objects, vec![s1, s2]);
     }
 
@@ -222,14 +236,47 @@ mod tests {
     #[test]
     fn test_shading_intersection_from_inside() {
         let mut w = default_world();
-        w.light = Some(PointLight::new(
+        w.lights = vec![PointLight::new(
             Tuple::point(0., 0.25, 0.),
             Color::new(1., 1., 1.),
-        ));
+        )];
         let r = Ray::new(Point::new(0., 0., 0.), Vector::new(0., 0., 1.));
         let s = &w.objects[1];
         let i = Intersection::new(s, 0.5);
         let comps = Computations::new(i, &r);
         assert_near!(w.shade_hit(comps), Color::new(0.90498, 0.90498, 0.90498));
+    }
+
+    #[test]
+    fn test_color_when_ray_misses() {
+        let w = default_world();
+        let r = Ray::new(Point::new(0., 0., -5.), Vector::new(0., 1., 0.));
+        assert_eq!(w.color_at(&r), Color::new(0., 0., 0.));
+    }
+
+    #[test]
+    fn test_color_when_ray_hits() {
+        let w = default_world();
+        let r = Ray::new(Point::new(0., 0., -5.), Vector::new(0., 0., 1.));
+        assert_near!(w.color_at(&r), Color::new(0.38066, 0.47583, 0.2855));
+    }
+
+    #[test]
+    fn test_color_with_intersection_behind_ray() {
+        let mut w = default_world();
+
+        for object in &mut w.objects {
+            if let WorldObject::Sphere(s) = object {
+                let mut m = s.material();
+                m.ambient = 1.0;
+                s.set_material(m);
+            }
+        }
+
+        let r = Ray::new(Point::new(0., 0., 0.75), Vector::new(0., 0., -1.));
+        assert_near!(
+            w.color_at(&r),
+            w.objects[1].material_at(point(0, 0, 0)).color
+        );
     }
 }

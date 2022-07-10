@@ -51,7 +51,7 @@ impl Sphere {
         world_normal.normalize()
     }
 
-    pub fn material_at(&self, _world_point: Tuple) -> Material {
+    pub fn material(&self) -> Material {
         self.material
     }
 }
@@ -163,7 +163,7 @@ mod tests {
 
     #[test]
     fn test_default_material() {
-        assert_eq!(Sphere::new().material_at(point(0, 0, 0)), Material::new());
+        assert_eq!(Sphere::new().material(), Material::new());
     }
 
     #[test]
@@ -172,6 +172,6 @@ mod tests {
         let mut m = Material::new();
         m.ambient = 1.0;
         s.set_material(m);
-        assert_eq!(s.material_at(point(0, 0, 0)), m);
+        assert_eq!(s.material(), m);
     }
 }
