@@ -63,7 +63,8 @@ mod tests {
     use crate::ray::Ray;
     use crate::test_utils::*;
     use crate::transforms::{rotation_z, scaling, translation};
-    use crate::tuple::{Point, Vector};
+    use crate::tuple::Point;
+    use crate::vector::Vector;
     use std::f32::consts::{PI, SQRT_2};
 
     #[test]

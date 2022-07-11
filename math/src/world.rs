@@ -152,7 +152,8 @@ mod tests {
     use crate::sphere::Sphere;
     use crate::test_utils::*;
     use crate::transforms;
-    use crate::tuple::{Point, Vector};
+    use crate::tuple::Point;
+    use crate::vector::Vector;
 
     #[test]
     fn test_create_world() {

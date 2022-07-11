@@ -148,23 +148,6 @@ fn test_point_from_tuple() {
 }
 
 #[test]
-fn test_vector_struct() {
-    let v = Vector::new(4.3, -4.2, 3.1);
-    assert_eq!(v.x, 4.3);
-    assert_eq!(v.y, -4.2);
-    assert_eq!(v.z, 3.1);
-    assert_eq!(Tuple::from(v), Tuple::new(4.3, -4.2, 3.1, 0.0));
-}
-
-#[test]
-fn test_vector_from_tuple() {
-    let t0 = tuple(4, 3, 2, 0);
-    let t1 = tuple(4, 3, 2, 1);
-    assert_eq!(Vector::try_from(t0), Ok(Vector::new(4.0, 3.0, 2.0)));
-    assert_eq!(Vector::try_from(t1), Err("Tuple has w != 0"));
-}
-
-#[test]
 fn test_reflect_vector_at_45_angle() {
     let v = vector(1, -1, 0);
     let n = vector(0, 1, 0);

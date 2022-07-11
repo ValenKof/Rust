@@ -134,37 +134,6 @@ impl crate::approx::Approx for Tuple {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Vector {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-}
-
-impl Vector {
-    pub fn new(x: f32, y: f32, z: f32) -> Vector {
-        Vector { x, y, z }
-    }
-}
-
-impl std::convert::From<Vector> for Tuple {
-    fn from(v: Vector) -> Tuple {
-        Tuple::vector(v.x, v.y, v.z)
-    }
-}
-
-impl std::convert::TryFrom<Tuple> for Vector {
-    type Error = &'static str;
-
-    fn try_from(t: Tuple) -> Result<Vector, Self::Error> {
-        if t.is_vector() {
-            Ok(Vector::new(t.x, t.y, t.z))
-        } else {
-            Err("Tuple has w != 0")
-        }
-    }
-}
-
-#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Point {
     pub x: f32,
     pub y: f32,

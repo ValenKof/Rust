@@ -7,7 +7,8 @@ use math::lighting;
 use math::material::Material;
 use math::ray::Ray;
 use math::sphere::Sphere;
-use math::tuple::{Point, Tuple, Vector};
+use math::tuple::{Point, Tuple};
+use math::vector::Vector;
 use math::world::{Intersect, WorldObject};
 
 const SIZE: usize = 500;
