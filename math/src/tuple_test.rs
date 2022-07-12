@@ -109,12 +109,12 @@ fn test_length_of_vector() {
 
 #[test]
 fn test_normalize_vector() {
-    assert_eq!(vector(4, 0, 0).normalize(), vector(1, 0, 0));
+    assert_eq!(vector(4, 0, 0).normalized(), vector(1, 0, 0));
     assert_near!(
-        vector(1, 2, 3).normalize(),
+        vector(1, 2, 3).normalized(),
         Tuple::vector(0.26726, 0.53452, 0.80178)
     );
-    assert_near!(vector(1, 2, 3).normalize().len(), 1.0);
+    assert_near!(vector(1, 2, 3).normalized().len(), 1.0);
 }
 
 #[test]
@@ -170,12 +170,12 @@ fn test_point_from_tuple() {
 fn test_reflect_vector_at_45_angle() {
     let v = vector(1, -1, 0);
     let n = vector(0, 1, 0);
-    assert_eq!(v.reflect(n), vector(1, 1, 0));
+    assert_eq!(v.reflected(n), vector(1, 1, 0));
 }
 
 #[test]
 fn test_reflect_vector_off_slanted_surface() {
     let v = vector(0, -1, 0);
     let n = vector(FRAC_1_SQRT_2, FRAC_1_SQRT_2, 0.0);
-    assert_near!(v.reflect(n), vector(1, 0, 0));
+    assert_near!(v.reflected(n), vector(1, 0, 0));
 }

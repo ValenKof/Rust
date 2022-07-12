@@ -26,7 +26,7 @@ fn main() {
 
             let r = Ray::new(
                 ray_origin,
-                Vector::try_from((Tuple::from(wall) - Tuple::from(ray_origin)).normalize())
+                Vector::try_from((Tuple::from(wall) - Tuple::from(ray_origin)).normalized())
                     .unwrap(),
             );
             let xs = s.intersect(&r);

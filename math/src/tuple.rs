@@ -37,11 +37,11 @@ impl Tuple {
         self.sq_len().sqrt()
     }
 
-    pub fn normalize(self) -> Tuple {
+    pub fn normalized(self) -> Tuple {
         self / self.len()
     }
 
-    pub fn reflect(self, normal: Tuple) -> Tuple {
+    pub fn reflected(self, normal: Tuple) -> Tuple {
         self - normal * (2. * dot(self, normal))
     }
 }

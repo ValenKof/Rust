@@ -3,8 +3,8 @@ use crate::transforms;
 use crate::tuple::{cross, Tuple};
 
 pub fn view_transform(from: Tuple, to: Tuple, up: Tuple) -> Matrix<4, 4> {
-    let forward = (to - from).normalize();
-    let up = up.normalize();
+    let forward = (to - from).normalized();
+    let up = up.normalized();
     let left = cross(forward, up);
     let up = cross(left, forward);
     &Matrix::new([

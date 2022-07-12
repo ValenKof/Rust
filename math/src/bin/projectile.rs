@@ -45,7 +45,7 @@ fn main() {
 
     let mut c = Canvas::new(900, 500, Color::black());
     for velocity_y in 2..5 {
-        let velocity = Tuple::vector(2., velocity_y as f32, 0.).normalize() * 11.25;
+        let velocity = Tuple::vector(2., velocity_y as f32, 0.).normalized() * 11.25;
         let mut color_i = [0.0, 0.0, 0.0];
         color_i[velocity_y - 2] = 1.0;
         let color = Color::new(color_i[0], color_i[1], color_i[2]);

@@ -6,8 +6,8 @@ use crate::tuple::{dot, Tuple};
 pub fn phong(m: Material, l: &PointLight, pos: Tuple, v: Tuple, n: Tuple) -> Color {
     let i = m.color * l.intensity;
 
-    let lm = (l.position - pos).normalize();
-    let rm = (-lm).reflect(n);
+    let lm = (l.position - pos).normalized();
+    let rm = (-lm).reflected(n);
 
     let ambient_lighting = m.ambient * i;
 

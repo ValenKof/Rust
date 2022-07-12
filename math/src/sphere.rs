@@ -48,7 +48,7 @@ impl Sphere {
         let object_normal = object_point - Tuple::point(0., 0., 0.);
         let mut world_normal = object_normal.apply(&self.transform.inverse().unwrap().transpose());
         world_normal.w = 0.;
-        world_normal.normalize()
+        world_normal.normalized()
     }
 
     pub fn material(&self) -> Material {
