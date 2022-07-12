@@ -148,12 +148,13 @@ mod tests {
     use crate::color::Color;
     use crate::light::PointLight;
     use crate::material::Material;
+    use crate::point::point;
     use crate::ray::Ray;
     use crate::sphere::Sphere;
     use crate::test_utils::*;
     use crate::transforms;
     use crate::tuple::Point;
-    use crate::vector::Vector;
+    use crate::vector::{vector, Vector};
 
     #[test]
     fn test_create_world() {

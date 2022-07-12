@@ -1,5 +1,6 @@
 use super::*;
 use crate::test_utils::*;
+use crate::tuple::tuple;
 
 #[test]
 fn test_constructing_4x4_matrix() {

@@ -1,3 +1,5 @@
+use crate::vector::Vector;
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Tuple {
     pub x: f32,
@@ -133,6 +135,24 @@ impl crate::approx::Approx for Tuple {
     }
 }
 
+impl std::convert::From<Vector> for Tuple {
+    fn from(v: Vector) -> Tuple {
+        Tuple::vector(v.x, v.y, v.z)
+    }
+}
+
+impl std::convert::TryFrom<Tuple> for Vector {
+    type Error = &'static str;
+
+    fn try_from(t: Tuple) -> Result<Vector, Self::Error> {
+        if t.is_vector() {
+            Ok(Vector::new(t.x, t.y, t.z))
+        } else {
+            Err("Tuple has w != 0")
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Point {
     pub x: f32,
@@ -162,6 +182,10 @@ impl std::convert::TryFrom<Tuple> for Point {
             Err("Tuple has w != 1")
         }
     }
+}
+
+pub fn tuple<T: crate::F32Const>(x: T, y: T, z: T, w: T) -> Tuple {
+    Tuple::new(x.to_f32(), y.to_f32(), z.to_f32(), w.to_f32())
 }
 
 #[cfg(test)]

@@ -36,7 +36,9 @@ pub fn phong(m: Material, l: &PointLight, pos: Tuple, v: Tuple, n: Tuple) -> Col
 mod tests {
     use super::*;
     use crate::material::Material;
+    use crate::point::point;
     use crate::test_utils::*;
+    use crate::vector::vector;
     use std::f32::consts::FRAC_1_SQRT_2;
 
     #[test]

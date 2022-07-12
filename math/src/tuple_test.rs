@@ -1,5 +1,7 @@
 use super::*;
+use crate::point::point;
 use crate::test_utils::*;
+use crate::vector::vector;
 use std::f32::consts::FRAC_1_SQRT_2;
 
 #[test]
@@ -131,6 +133,23 @@ fn test_cross_product_of_two_vector() {
 }
 
 #[test]
+fn test_vector_struct() {
+    let v = vector(4.3, -4.2, 3.1);
+    assert_eq!(v.x, 4.3);
+    assert_eq!(v.y, -4.2);
+    assert_eq!(v.z, 3.1);
+    assert_eq!(Tuple::from(v), Tuple::new(4.3, -4.2, 3.1, 0.0));
+}
+
+#[test]
+fn test_vector_from_tuple() {
+    let t0 = tuple(4, 3, 2, 0);
+    let t1 = tuple(4, 3, 2, 1);
+    assert_eq!(Vector::try_from(t0), Ok(Vector::new(4.0, 3.0, 2.0)));
+    assert_eq!(Vector::try_from(t1), Err("Tuple has w != 0"));
+}
+
+#[test]
 fn test_tuple_from_point() {
     let p = Point::new(4.3, -4.2, 3.1);
     assert_eq!(p.x, 4.3);
@@ -157,6 +176,6 @@ fn test_reflect_vector_at_45_angle() {
 #[test]
 fn test_reflect_vector_off_slanted_surface() {
     let v = vector(0, -1, 0);
-    let n = Tuple::vector(FRAC_1_SQRT_2, FRAC_1_SQRT_2, 0.0);
+    let n = vector(FRAC_1_SQRT_2, FRAC_1_SQRT_2, 0.0);
     assert_near!(v.reflect(n), vector(1, 0, 0));
 }

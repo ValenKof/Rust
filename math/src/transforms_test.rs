@@ -1,6 +1,8 @@
 use super::*;
+use crate::point::point;
 use crate::test_utils::*;
 use crate::tuple::Tuple;
+use crate::vector::vector;
 use std::f32::consts::{FRAC_1_SQRT_2, PI};
 
 #[test]

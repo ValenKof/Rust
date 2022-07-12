@@ -19,8 +19,10 @@ pub fn view_transform(from: Tuple, to: Tuple, up: Tuple) -> Matrix<4, 4> {
 mod tests {
     use super::*;
     use crate::matrix::Matrix;
+    use crate::point::point;
     use crate::test_utils::*;
     use crate::transforms;
+    use crate::vector::vector;
 
     #[test]
     fn test_view_transformation_matrix_for_default_orientation() {
