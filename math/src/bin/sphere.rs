@@ -5,10 +5,9 @@ use math::intersect::hit;
 use math::light::PointLight;
 use math::lighting;
 use math::material::Material;
+use math::point::{point, Point};
 use math::ray::Ray;
 use math::sphere::Sphere;
-use math::tuple::{Point, Tuple};
-use math::vector::Vector;
 use math::world::{Intersect, WorldObject};
 
 const SIZE: usize = 500;
@@ -29,7 +28,7 @@ fn main() {
     let s = WorldObject::Sphere(s);
 
     let light = PointLight {
-        position: Tuple::point(-10., 10., -10.),
+        position: point(-10., 10., -10.),
         intensity: Color::new(1., 1., 1.),
     };
 
@@ -39,15 +38,11 @@ fn main() {
             let wall_x: f32 = (x as f32) * PIXEL_SIZE - WALL_SIZE / 2.0;
             let wall = Point::new(wall_x, wall_y, WALL_Z);
 
-            let r = Ray::new(
-                ray_origin,
-                Vector::try_from((Tuple::from(wall) - Tuple::from(ray_origin)).normalized())
-                    .unwrap(),
-            );
+            let r = Ray::new(ray_origin, (wall - ray_origin).normalized());
             let xs = s.intersect(&r);
             if let Some(h) = hit(&xs) {
-                let point = Tuple::from(r.position(h.t));
-                let eye = -Tuple::from(r.direction);
+                let point = r.position(h.t);
+                let eye = -r.direction;
                 let color = lighting::phong(
                     h.object.material_at(point),
                     &light,

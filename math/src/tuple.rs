@@ -1,3 +1,4 @@
+use crate::point::Point;
 use crate::vector::Vector;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -150,19 +151,6 @@ impl std::convert::TryFrom<Tuple> for Vector {
         } else {
             Err("Tuple has w != 0")
         }
-    }
-}
-
-#[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Point {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-}
-
-impl Point {
-    pub fn new(x: f32, y: f32, z: f32) -> Point {
-        Point { x, y, z }
     }
 }
 

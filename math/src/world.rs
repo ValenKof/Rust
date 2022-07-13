@@ -3,15 +3,16 @@ use crate::intersect::{hit, Intersection};
 use crate::light::PointLight;
 use crate::lighting;
 use crate::material::Material;
+use crate::point::{point, Point};
 use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::transforms;
-use crate::tuple::{dot, Tuple};
+use crate::vector::{dot, Vector};
 
 pub trait Intersect {
     fn intersect<'a>(&'a self, r: &Ray) -> Vec<Intersection<'a>>;
-    fn normal_at(&self, world_point: Tuple) -> Tuple;
-    fn material_at(&self, world_point: Tuple) -> Material;
+    fn normal_at(&self, world_point: Point) -> Vector;
+    fn material_at(&self, world_point: Point) -> Material;
 }
 
 #[derive(Debug, PartialEq)]
@@ -31,13 +32,13 @@ impl Intersect for WorldObject {
         intersections
     }
 
-    fn normal_at(&self, world_point: Tuple) -> Tuple {
+    fn normal_at(&self, world_point: Point) -> Vector {
         match self {
             WorldObject::Sphere(s) => s.normal_at(world_point),
         }
     }
 
-    fn material_at(&self, _world_point: Tuple) -> Material {
+    fn material_at(&self, _world_point: Point) -> Material {
         match self {
             WorldObject::Sphere(s) => s.material(),
         }
@@ -46,17 +47,17 @@ impl Intersect for WorldObject {
 
 pub struct Computations<'a> {
     pub object: &'a WorldObject,
-    pub point: Tuple,
-    pub eye_vec: Tuple,
-    pub normal_vec: Tuple,
+    pub point: Point,
+    pub eye_vec: Vector,
+    pub normal_vec: Vector,
     pub is_inside: bool,
 }
 
 impl<'a> Computations<'a> {
     pub fn new(i: Intersection<'a>, r: &Ray) -> Self {
-        let point = Tuple::from(r.position(i.t));
+        let point = r.position(i.t);
         let mut normal_vec = i.object.normal_at(point);
-        let eye_vec = -Tuple::from(r.direction);
+        let eye_vec = -r.direction;
         let is_inside = dot(normal_vec, eye_vec) < 0.0;
         if is_inside {
             normal_vec = -normal_vec;
@@ -120,7 +121,7 @@ impl World {
 pub fn default_world() -> World {
     let mut w = World::new();
     w.lights = vec![PointLight::new(
-        Tuple::point(-10., -10., -10.),
+        point(-10., -10., -10.),
         Color::new(1., 1., 1.),
     )];
     w.objects.push(WorldObject::Sphere({
@@ -148,12 +149,11 @@ mod tests {
     use crate::color::Color;
     use crate::light::PointLight;
     use crate::material::Material;
-    use crate::point::point;
+    use crate::point::{point, Point};
     use crate::ray::Ray;
     use crate::sphere::Sphere;
     use crate::test_utils::*;
     use crate::transforms;
-    use crate::tuple::Point;
     use crate::vector::{vector, Vector};
 
     #[test]
@@ -238,10 +238,7 @@ mod tests {
     #[test]
     fn test_shading_intersection_from_inside() {
         let mut w = default_world();
-        w.lights = vec![PointLight::new(
-            Tuple::point(0., 0.25, 0.),
-            Color::new(1., 1., 1.),
-        )];
+        w.lights = vec![PointLight::new(point(0., 0.25, 0.), Color::new(1., 1., 1.))];
         let r = Ray::new(Point::new(0., 0., 0.), Vector::new(0., 0., 1.));
         let s = &w.objects[1];
         let i = Intersection::new(s, 0.5);

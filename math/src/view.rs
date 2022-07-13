@@ -1,8 +1,9 @@
 use crate::matrix::Matrix;
+use crate::point::Point;
 use crate::transforms;
-use crate::tuple::{cross, Tuple};
+use crate::vector::{cross, Vector};
 
-pub fn view_transform(from: Tuple, to: Tuple, up: Tuple) -> Matrix<4, 4> {
+pub fn view_transform(from: Point, to: Point, up: Vector) -> Matrix<4, 4> {
     let forward = (to - from).normalized();
     let up = up.normalized();
     let left = cross(forward, up);

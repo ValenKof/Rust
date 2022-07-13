@@ -27,9 +27,8 @@ impl Vector {
     }
 }
 
-// TODO: return Vector.
-pub fn vector<T: crate::F32Const>(x: T, y: T, z: T) -> crate::tuple::Tuple {
-    crate::tuple::Tuple::vector(x.to_f32(), y.to_f32(), z.to_f32())
+pub fn vector<T: crate::F32Const>(x: T, y: T, z: T) -> Vector {
+    Vector::new(x.to_f32(), y.to_f32(), z.to_f32())
 }
 
 impl std::ops::Add<Vector> for Vector {
@@ -102,17 +101,9 @@ impl crate::approx::Approx for Vector {
 
 #[cfg(test)]
 mod tests {
-
-    use super::{cross, dot, Vector};
+    use super::*;
     use crate::test_utils::*;
     use std::f32::consts::FRAC_1_SQRT_2;
-
-    // TODO: Delete.
-    pub fn vector<T: crate::F32Const>(x: T, y: T, z: T) -> Vector {
-        crate::tuple::Tuple::vector(x.to_f32(), y.to_f32(), z.to_f32())
-            .try_into()
-            .unwrap()
-    }
 
     #[test]
     fn test_create_vector() {

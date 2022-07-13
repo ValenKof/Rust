@@ -1,9 +1,10 @@
 use crate::color::Color;
 use crate::light::PointLight;
 use crate::material::Material;
-use crate::tuple::{dot, Tuple};
+use crate::point::Point;
+use crate::vector::{dot, Vector};
 
-pub fn phong(m: Material, l: &PointLight, pos: Tuple, v: Tuple, n: Tuple) -> Color {
+pub fn phong(m: Material, l: &PointLight, pos: Point, v: Vector, n: Vector) -> Color {
     let i = m.color * l.intensity;
 
     let lm = (l.position - pos).normalized();
@@ -56,7 +57,7 @@ mod tests {
     fn test_lighting_with_eye_between_light_and_surface_eye_offset_45() {
         let m = Material::new();
         let pos = point(0, 0, 0);
-        let eye_vec = Tuple::vector(0.0, FRAC_1_SQRT_2, -FRAC_1_SQRT_2);
+        let eye_vec = vector(0.0, FRAC_1_SQRT_2, -FRAC_1_SQRT_2);
         let normal_vec = vector(0, 0, -1);
         let light = PointLight::new(point(0, 0, -10), Color::new(1., 1., 1.));
         let result = phong(m, &light, pos, eye_vec, normal_vec);
@@ -78,7 +79,7 @@ mod tests {
     fn test_lighting_with_eye_in_path_of_reflection_vector() {
         let m = Material::new();
         let pos = point(0, 0, 0);
-        let eye_vec = Tuple::vector(0.0, -FRAC_1_SQRT_2, -FRAC_1_SQRT_2);
+        let eye_vec = vector(0.0, -FRAC_1_SQRT_2, -FRAC_1_SQRT_2);
         let normal_vec = vector(0, 0, -1);
         let light = PointLight::new(point(0, 10, -10), Color::new(1., 1., 1.));
         let result = phong(m, &light, pos, eye_vec, normal_vec);

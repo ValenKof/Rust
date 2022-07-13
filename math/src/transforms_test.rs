@@ -1,7 +1,6 @@
 use super::*;
 use crate::point::point;
 use crate::test_utils::*;
-use crate::tuple::Tuple;
 use crate::vector::vector;
 use std::f32::consts::{FRAC_1_SQRT_2, PI};
 
@@ -61,10 +60,7 @@ fn test_rotate_point_around_x_axis() {
     let p = point(0, 1, 0);
     let half_quarter = rotation_x(PI / 4.);
     let full_quarter = rotation_x(PI / 2.);
-    assert_near!(
-        &half_quarter * p,
-        Tuple::point(0., FRAC_1_SQRT_2, FRAC_1_SQRT_2)
-    );
+    assert_near!(&half_quarter * p, point(0., FRAC_1_SQRT_2, FRAC_1_SQRT_2));
     assert_near!(&full_quarter * p, point(0, 0, 1));
 }
 
@@ -73,10 +69,7 @@ fn test_rotate_point_around_y_axis() {
     let p = point(0, 0, 1);
     let half_quarter = rotation_y(PI / 4.);
     let full_quarter = rotation_y(PI / 2.);
-    assert_near!(
-        &half_quarter * p,
-        Tuple::point(FRAC_1_SQRT_2, 0., FRAC_1_SQRT_2)
-    );
+    assert_near!(&half_quarter * p, point(FRAC_1_SQRT_2, 0., FRAC_1_SQRT_2));
     assert_near!(&full_quarter * p, point(1, 0, 0));
 }
 
@@ -85,10 +78,7 @@ fn test_rotate_point_around_z_axis() {
     let p = point(0, 1, 0);
     let half_quarter = rotation_z(PI / 4.);
     let full_quarter = rotation_z(PI / 2.);
-    assert_near!(
-        &half_quarter * p,
-        Tuple::point(-FRAC_1_SQRT_2, FRAC_1_SQRT_2, 0.)
-    );
+    assert_near!(&half_quarter * p, point(-FRAC_1_SQRT_2, FRAC_1_SQRT_2, 0.));
     assert_near!(&full_quarter * p, point(-1, 0, 0));
 }
 

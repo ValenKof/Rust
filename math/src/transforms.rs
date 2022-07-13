@@ -1,5 +1,7 @@
 use crate::matrix::Matrix;
+use crate::point::Point;
 use crate::tuple::Tuple;
+use crate::vector::Vector;
 
 pub fn translation(x: f32, y: f32, z: f32) -> Matrix<4, 4> {
     Matrix::new([
@@ -88,6 +90,18 @@ impl Transform for Matrix<4, 4> {
 impl Transform for Tuple {
     fn apply(&self, t: &Matrix<4, 4>) -> Self {
         t * *self
+    }
+}
+
+impl Transform for Vector {
+    fn apply(&self, t: &Matrix<4, 4>) -> Self {
+        Vector::try_from(t * Tuple::from(*self)).unwrap()
+    }
+}
+
+impl Transform for Point {
+    fn apply(&self, t: &Matrix<4, 4>) -> Self {
+        Point::try_from(t * Tuple::from(*self)).unwrap()
     }
 }
 

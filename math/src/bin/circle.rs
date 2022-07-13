@@ -2,9 +2,10 @@ use math::canvas::Canvas;
 use math::color::Color;
 use math::image::Image;
 use math::intersect::hit;
+use math::point::Point;
 use math::ray::Ray;
 use math::sphere::Sphere;
-use math::tuple::{Point, Tuple};
+use math::tuple::Tuple;
 use math::vector::Vector;
 use math::world::{Intersect, WorldObject};
 

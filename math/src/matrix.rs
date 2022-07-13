@@ -1,3 +1,7 @@
+use crate::point::Point;
+use crate::tuple::Tuple;
+use crate::vector::Vector;
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct Matrix<const N: usize, const M: usize> {
     data: [[f32; M]; N],
@@ -178,18 +182,34 @@ impl<const N: usize, const M: usize, const K: usize> std::ops::Mul<&Matrix<M, K>
     }
 }
 
-impl std::ops::Mul<crate::tuple::Tuple> for &Matrix<4, 4> {
-    type Output = crate::tuple::Tuple;
+impl std::ops::Mul<Tuple> for &Matrix<4, 4> {
+    type Output = Tuple;
 
-    fn mul(self, rhs: crate::tuple::Tuple) -> Self::Output {
+    fn mul(self, rhs: Tuple) -> Tuple {
         let rhs = Matrix::new([[rhs.x], [rhs.y], [rhs.z], [rhs.w]]);
         let res = self * &rhs;
-        crate::tuple::Tuple::new(
+        Tuple::new(
             res.data[0][0],
             res.data[1][0],
             res.data[2][0],
             res.data[3][0],
         )
+    }
+}
+
+impl std::ops::Mul<Vector> for &Matrix<4, 4> {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Vector {
+        Vector::try_from(self * Tuple::from(rhs)).unwrap()
+    }
+}
+
+impl std::ops::Mul<Point> for &Matrix<4, 4> {
+    type Output = Point;
+
+    fn mul(self, rhs: Point) -> Point {
+        Point::try_from(self * Tuple::from(rhs)).unwrap()
     }
 }
 

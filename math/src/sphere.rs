@@ -1,8 +1,9 @@
 use crate::material::Material;
 use crate::matrix::Matrix;
+use crate::point::{point, Point};
 use crate::ray::Ray;
 use crate::transforms::Transform;
-use crate::tuple::{dot, Tuple};
+use crate::vector::{dot, vector, Vector};
 
 #[derive(Debug, PartialEq)]
 pub struct Sphere {
@@ -28,8 +29,8 @@ impl Sphere {
 
     pub fn intersect(&self, r: &Ray) -> Vec<f32> {
         let r = r.apply(&self.transform.inverse().unwrap());
-        let origin = Tuple::from(r.origin);
-        let direction = Tuple::from(r.direction);
+        let origin = r.origin - point(0, 0, 0);
+        let direction = r.direction;
 
         let a = direction.sq_len();
         let b = dot(direction, origin);
@@ -43,12 +44,12 @@ impl Sphere {
         }
     }
 
-    pub fn normal_at(&self, world_point: Tuple) -> Tuple {
+    pub fn normal_at(&self, world_point: Point) -> Vector {
         let object_point = world_point.apply(&self.transform.inverse().unwrap());
-        let object_normal = object_point - Tuple::point(0., 0., 0.);
-        let mut world_normal = object_normal.apply(&self.transform.inverse().unwrap().transpose());
-        world_normal.w = 0.;
-        world_normal.normalized()
+        let object_normal = object_point - point(0., 0., 0.);
+        let world_normal = crate::tuple::Tuple::from(object_normal)
+            .apply(&self.transform.inverse().unwrap().transpose());
+        vector(world_normal.x, world_normal.y, world_normal.z).normalized()
     }
 
     pub fn material(&self) -> Material {
@@ -61,10 +62,10 @@ mod tests {
     use super::*;
     use crate::matrix::Matrix;
     use crate::point::point;
+    use crate::point::Point;
     use crate::ray::Ray;
     use crate::test_utils::*;
     use crate::transforms::{rotation_z, scaling, translation};
-    use crate::tuple::Point;
     use crate::vector::{vector, Vector};
     use std::f32::consts::{PI, SQRT_2};
 
@@ -143,24 +144,24 @@ mod tests {
     #[test]
     fn test_normal_nonaxial() {
         let a = 1.0 / 3.0_f32.sqrt();
-        let n = Sphere::new().normal_at(Tuple::point(a, a, a));
-        assert_near!(n, Tuple::vector(a, a, a));
+        let n = Sphere::new().normal_at(point(a, a, a));
+        assert_near!(n, vector(a, a, a));
     }
 
     #[test]
     fn test_normal_of_translated_sphere() {
         let mut s = Sphere::new();
         s.set_transform(translation(0., 1., 0.));
-        let n = s.normal_at(Tuple::point(0.0, 1.70711, -0.70711));
-        assert_near!(n, Tuple::vector(0.0, 0.70711, -0.70711));
+        let n = s.normal_at(point(0.0, 1.70711, -0.70711));
+        assert_near!(n, vector(0.0, 0.70711, -0.70711));
     }
 
     #[test]
     fn test_normal_of_transformedsphere() {
         let mut s = Sphere::new();
         s.set_transform(&scaling(1.0, 0.5, 1.0) * &rotation_z(PI / 5.0));
-        let n = s.normal_at(Tuple::point(0.0, SQRT_2 / 2.0, -SQRT_2 / 2.0));
-        assert_near!(n, Tuple::vector(0.0, 0.97014, -0.24254));
+        let n = s.normal_at(point(0.0, SQRT_2 / 2.0, -SQRT_2 / 2.0));
+        assert_near!(n, vector(0.0, 0.97014, -0.24254));
     }
 
     #[test]
