@@ -1,4 +1,5 @@
 pub mod approx;
+pub mod camera;
 pub mod canvas;
 pub mod color;
 pub mod image;
