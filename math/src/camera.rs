@@ -106,7 +106,7 @@ mod tests {
             &transforms::rotation_y(PI / 4.0) * &transforms::translation(0.0, -2.0, 5.0),
         );
         let r = c.ray_for_pixel(100, 50);
-        assert_eq!(r.origin, point(0, 2, -5));
+        assert_near!(r.origin, point(0, 2, -5));
         assert_near!(r.direction, vector(FRAC_1_SQRT_2, 0.0, -FRAC_1_SQRT_2));
     }
 }
